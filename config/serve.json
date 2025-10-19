@@ -1,0 +1,6 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/spfx-serve.schema.json",
+  "port": 4321,
+  "https": true,
+  "initialPage": "https://russelsmith.sharepoint.com/sites/RusselSmith%20Business%20Automation/_layouts/workbench.aspx"
+}

@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "rs-nonconformance-client-side-solution",
+    "id": "84278452-59c7-4827-a24a-52c460be81cb",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.21.1"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "rs-nonconformance description"
+      },
+      "longDescription": {
+        "default": "rs-nonconformance description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "rs-nonconformance Feature",
+        "description": "The feature that activates elements of the rs-nonconformance solution.",
+        "id": "ee03dd19-30e3-46d4-9bda-d79d57191a3c",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/rs-nonconformance.sppkg"
+  }
+}

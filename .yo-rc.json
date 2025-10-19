@@ -1,0 +1,18 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "plusBeta": false,
+    "isCreatingSolution": true,
+    "nodeVersion": "18.17.1",
+    "sdksVersions": {},
+    "version": "1.21.1",
+    "libraryName": "rs-nonconformance",
+    "libraryId": "84278452-59c7-4827-a24a-52c460be81cb",
+    "environment": "spo",
+    "packageManager": "npm",
+    "solutionName": "rs-nonconformance",
+    "solutionShortDescription": "rs-nonconformance description",
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "componentType": "webpart"
+  }
+}
