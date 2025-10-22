@@ -21,11 +21,12 @@ MainApplication.ApproveRequestComponent.ApplicationDetails = function () {
     this.feedback = false;
     this.approverComments = "";
     this.transactionHistory = [];
-    this.defaultStage = "AA0";
+    this.defaultStage = "AA1";
     this.returned = false;
     this.messageType = "standard";
     this.documentsToUpdate = {};
     this.isNonConformance = null;
+    this.mode = null;
 }
 
 
@@ -41,6 +42,7 @@ whenApproveRequestDependeciesLoaded = function () {
     customWorkflowEngine = new WorkflowManagerEngine(CurrentUserProperties);
     globalDefinitions.SetWorkflowRouting(customWorkflowEngine);
     AppRequest.itemId = $spcontext.getParameterByName("itemid", window.location.href);
+    AppRequest.mode = $spcontext.getParameterByName("mode", window.location.href);
 
     $spcontext.filesDictionary = {};
 
@@ -58,6 +60,8 @@ whenApproveRequestDependeciesLoaded = function () {
 			o365: true,
 			appendFiles: true,
 			cancelClear: false,
+            dynamicNaming: false,
+            fileNameasName: true,
 		},
 		function (elementName, listOfFiles, fileId) {
 			$("div[speed-file-bind='" + elementName + "']").empty();
@@ -111,7 +115,7 @@ whenApproveRequestDependeciesLoaded = function () {
 	);
 
     $spcontext.applyValidationEvents();
-    // MainApplication.ApproveRequestComponent.displayManagementDetails();
+    // MainApplication.ApproveRequestComponent.dateHandler();
     MainApplication.ApproveRequestComponent.recoverListData();
     setTimeout(function () {
         globalDefinitions.closeLoader();
@@ -133,12 +137,12 @@ MainApplication.ApproveRequestComponent.recoverListData = function() {
                 type: 'Text',
                 val: AppRequest.itemId
             },
-            {
-                operator: 'Eq',
-                field: 'Approval_Status',
-                type: 'Text',
-                val: globalDefinitions.stageDefinitions.pending
-            }
+            // {
+            //     operator: 'Eq',
+            //     field: 'Approval_Status',
+            //     type: 'Text',
+            //     val: globalDefinitions.stageDefinitions.pending
+            // }
         ]);
         
         var extraProperties = [
@@ -165,10 +169,6 @@ MainApplication.ApproveRequestComponent.recoverListData = function() {
 
                         // if (MainApplication.configuredTaskMembers[listProperties.Current_Approver].belongs) {
                         if (typeof error === "undefined") {
-
-                            // if(listProperties.UpdateMode !== "Yes"){
-                            //     $("#processbyall").remove();
-                            // }
                             
                             listProperties.Created = $spcontext.stringnifyDate({
                                 value: listProperties.Created
@@ -209,7 +209,7 @@ MainApplication.ApproveRequestComponent.recoverListData = function() {
                                 globalDefinitions.displayHistory(listProperties.Transaction_History);
                             }
 
-                            if(MainApplication.isUserAnActor){
+                            if(listProperties.Current_Approver !== "Employee" && listProperties.Current_Approver_Code !== "AA1"){
                                 MainApplication.ApproveRequestComponent.otherApproversReadOnlyForm();
                             }
 
@@ -222,6 +222,7 @@ MainApplication.ApproveRequestComponent.recoverListData = function() {
                                 $spcontext.attachmentLinkBind(listProperties.AttachmentURL);
                             }
                             
+                            MainApplication.ApproveRequestComponent.dateHandler(listProperties.ActualDateOfResponse);
                             globalDefinitions.closeLoader();
                             
                         } else {
@@ -261,8 +262,12 @@ MainApplication.ApproveRequestComponent.actionConfirmed = function () {
 MainApplication.ApproveRequestComponent.saveDataToList = function (actionTaken) {
     globalDefinitions.onActionClicked();
     
+    
+    var tempData = $spcontext.bind({});
+
+    
+
     if ($spcontext.checkPassedValidation()) {
-        
 
         if (CurrentUserProperties.title === AppRequest.requestDetails.Title) {
             var formData = $spcontext.bind({}, "CorrectionData");
@@ -270,8 +275,8 @@ MainApplication.ApproveRequestComponent.saveDataToList = function (actionTaken) 
             var formData = {};
         }
 
-        AppRequest.comment = $("#approvercomment").val();
 
+        AppRequest.comment = $("#approvercomment").val();
         formData.Comment = AppRequest.comment;
 
         var historyProp = {
@@ -283,7 +288,17 @@ MainApplication.ApproveRequestComponent.saveDataToList = function (actionTaken) 
 
 
         formData = customWorkflowEngine.routeEngine(customWorkflowEngine).requestHistoryHandler(formData, AppRequest.requestDetails.Transaction_History, historyProp);
-        formData = customWorkflowEngine.routeEngine(customWorkflowEngine).runRouting(formData, AppRequest.requestDetails.Current_Approver_Code, actionTaken);
+        
+        if (actionTaken === "Approved" || actionTaken === "Declined") {
+            formData = customWorkflowEngine.routeEngine(customWorkflowEngine).runRouting(formData, AppRequest.requestDetails.Current_Approver_Code, actionTaken);
+        } else if (actionTaken === "Revise") {
+            formData.Current_Approver = globalDefinitions.stageDefinitions.employee;
+            formData.Current_Approver_Code = AppRequest.defaultStage;
+            formData.PendingUserLogin = AppRequest.requestDetails.EmployeeEmail;
+            formData.PendingUserEmail = AppRequest.requestDetails.EmployeeEmail;
+            // formData.Approval_Status = "Revise";
+            formData.ReturnForCorrection = "Yes";
+        }
         
         globalDefinitions.onActionCompleted();
         MainApplication.ApproveRequestComponent.proceedToList(formData);
@@ -437,5 +452,26 @@ MainApplication.ApproveRequestComponent.otherApproversReadOnlyForm = function ()
     $(".approversReadOnlyContainer").empty();
     $(".approversReadOnlyContainer").append(otherApproversForm);
     $(".approver-btn").text("Approve");
+    $("#rtnBtn").show();
+    $("#approvercomment").removeAttr("readonly");
 
+}
+
+MainApplication.ApproveRequestComponent.dateHandler = function (actualdate) {
+
+    if (actualdate === "" || actualdate === null){
+        const today = $spcontext.serverDate();
+        
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        const todayStr = `${yyyy}-${mm}-${dd}`;
+
+        // Set Request Date default to today
+        $('#actualDateOfResponse').val(todayStr);
+        $('#actualDateOfResponse').attr('speed-bind', "ActualDateOfResponse");
+    } else {
+        $('#actualDateOfResponse').val(actualdate);
+        // $('#actualDateOfResponse').attr('speed-bind', "ActualDateOfResponse");
+    }
 }

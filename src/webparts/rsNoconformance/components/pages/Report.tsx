@@ -91,8 +91,8 @@ export default class Report extends React.Component<{}, {}> {
                                 <thead className="border-b border-gray-200">
                                     <tr>
                                         <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-blue-600 uppercase tracking-wider">S/N</th>
-                                        <th speed-table-data="NCReferenceID" className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-blue-600 uppercase tracking-wider">AUDIT REF ID</th>
-                                        <th speed-table-data="Title" className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-blue-600 uppercase tracking-wider">DIVISION/UNIT</th>
+                                        <th speed-table-data="NCReferenceID" className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-blue-600 uppercase tracking-wider">NC REF ID</th>
+                                        <th speed-table-data="Title" className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-blue-600 uppercase tracking-wider">EMPLOYEE</th>
                                         <th speed-table-data="EmployeeDivision" className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-blue-600 uppercase tracking-wider">DIVISION/UNIT</th>
                                         <th speed-table-data="Approval_Status" className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-blue-600 uppercase tracking-wider">STATUS</th>
                                         <th speed-table-data="Current_Approver" className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-blue-600 uppercase tracking-wider">NEXT APPROVER</th>

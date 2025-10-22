@@ -321,53 +321,6 @@ function whenLayoutLoaded() {
             }
         );
 
-
-        // var ncRegisterColumns = [
-        //     "ID",
-        //     "Title",
-        //     "NCReferenceID",
-        //     "ISOClause",
-        //     "NonConformanceStatement",
-        //     "Occurrence",
-        //     "NCRating",
-        //     "NCClassification",
-        //     "RiskImpact",
-        //     "OverallRiskExposure",
-        //     "ObjectiveEvidence",
-        //     "TypeOfAudit",
-        //     "Process",
-        //     "Procedure"
-        // ];
-
-        // speedctxRoot.getListToItems(
-        //     "NonConformanceRegister",
-        //     [{
-        //         orderby: "ID",
-        //         ascending: "FALSE"
-        //       }
-        //     ],
-        //     {
-        //         ignoreThreshold: false,
-        //         data: ncRegisterColumns,
-        //         merge: false,
-        //     },
-        //     false,
-        //     function (item) {
-        //         if (item.NCReferenceID !== "") {
-        //             if (typeof MainApplication.AuditDetails[item.NCReferenceID] === "undefined") {
-        //                 MainApplication.AuditDetails[item.NCReferenceID] = item;
-        //                 MainApplication.AuditList.push(item);
-        //             }
-        //         }
-
-        //         return item;
-        //     },
-        //     function (items) {
-        //         MainApplication.AuditList = items;
-        //         checkAppDependency();
-        //     }
-        // );
-
       });
 
       

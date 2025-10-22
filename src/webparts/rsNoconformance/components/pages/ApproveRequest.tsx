@@ -198,21 +198,22 @@ export default class ApproveRequest extends React.Component<{}, {}> {
                 <h2 style={{ marginTop: "2.2rem" }} className="text-xl sm:text-2xl font-bold text-navy-900 mb-4 sm:mb-6">Correction and Corrective Action Section</h2>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 approversReadOnlyContainer">
                     <div className="mt-2">
-                        <label className="block text-sm font-medium text-blue-600 mb-2">Name<span className="required">*</span></label>
+                        <label className="block text-sm font-medium text-blue-600 mb-2">Name</label>
                         <input
-                            speed-bind-class="CorrectionData"
-                            speed-bind-validate="CorrectiveActionName"
+                            readOnly
+                            speed-bind="Title"
                             type="text"
                             placeholder="Enter text here..."
                             className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
                         />
                     </div>
                     <div className="mt-2">
-                        <label className="block text-sm font-medium text-blue-600 mb-2">Actual Date of Response<span className="required">*</span></label>
+                        <label className="block text-sm font-medium text-blue-600 mb-2">Actual Date of Response</label>
                         <input
+                            readOnly
+                            id="actualDateOfResponse"
                             speed-bind-class="CorrectionData"
-                            speed-bind="ActualDateOfResponse"
-                            type="date"
+                            type="text"
                             placeholder="Enter text here..."
                             className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
                         />
@@ -257,6 +258,21 @@ export default class ApproveRequest extends React.Component<{}, {}> {
                     </div>
                 </div>
 
+                <div style={{ marginTop: '2.2rem' }}>
+                        <div>
+                            <label className="block text-sm font-medium text-blue-600 mb-2">Comment</label>
+                            <textarea id="approvercomment"
+                            readOnly
+                            speed-bind-validate="Comment"
+                            speed-include-control="false"
+                            speed-as-static="true"
+                            speed-validate-type="Comments"
+                            speed-event-switch="false"
+                            speed-validate-msg="Please tell us why you want to decline the NC!"
+                            placeholder="Enter text here..." className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base" defaultValue={""} />
+                        </div>
+                    </div>
+
                 <div className="action-btns flex justify-center items-center gap-3" style={{ marginTop: "2rem" }}>
                     <ClientButton
                         text={"Submit"}
@@ -265,6 +281,8 @@ export default class ApproveRequest extends React.Component<{}, {}> {
                         prop="Approved"
                         attr=""
                     />
+
+                    <ClientButton text={"Decline"} func={"MainApplication.ApproveRequestComponent.confirmSubmit"} clax={"px-4 py-2 bg-slate-500 text-white text-sm font-medium hover:bg-slate-600 transition-colors hidden"} prop="Revise" attr="id='rtnBtn'" />
                     {/* <button id="saveButton" className="px-4 py-2 bg-slate-500 text-white text-sm font-medium hover:bg-slate-600 transition-colors">
                             Save
                         </button> */}

@@ -107,7 +107,6 @@ export default class NewRequest extends React.Component<{}, {}> {
                     <div className="mt-2">
                         <label className="block text-sm font-medium text-blue-600 mb-2">Non-Conformance Statement</label>
                         <textarea
-                            readOnly
                             placeholder="Enter text here..."
                             className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400  focus:ring-2 focus:ring-primary-500  transition-all text-sm sm:text-base"
                             id="nonConformanceStatement"
@@ -177,7 +176,7 @@ export default class NewRequest extends React.Component<{}, {}> {
                             <input
                                 type="date"
                                 className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400  focus:ring-2 focus:ring-primary-500  transition-all text-sm sm:text-base"
-                                speed-bind="ExpectedDate"
+                                speed-bind-validate="ExpectedDate"
                                 id="expectedDate"
                             />
                         </div>

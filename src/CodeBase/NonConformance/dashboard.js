@@ -102,7 +102,7 @@ whenDashboardDependeciesLoaded = function () {
 
             var editStr = `
                 <div class="flex space-x-1 sm:space-x-2">
-                    <a title="Modify" href="#/newrequest?itemId=${valueToEva.WorkflowRequestID}" 
+                    <a title="Modify" href="#/approverequest?itemId=${valueToEva.WorkflowRequestID}&mode=edit" 
                         class="p-1 sm:p-2 text-slate-400 hover:text-green-600 hover:bg-green-50 transition-colors">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
@@ -352,7 +352,7 @@ MainApplication.DashboardComponent.myRequests = function () {
                             <div class="text-center">
                                 <h3 id='totalAudit' class="text-base sm:text-lg font-semibold text-navy-900 flex-1 mr-2">${tableData.length}</h3>
                                 <h3 class="text-base sm:text-lg font-semibold text-navy-900 flex-1 mr-2">
-                                    Total Audit
+                                    Total NC
                                 </h3>
                             </div>
                         </div>

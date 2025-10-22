@@ -127,7 +127,7 @@ function whenNewRequestDependeciesLoaded() {
 
     MainApplication.NewRequestComponent.dateHandler();
 
-    if (!MainApplication.configuredTaskMembers[globalDefinitions.stageDefinitions.management].belongs){
+    if (!MainApplication.isUserAnActor){
         globalDefinitions.HandlerError("You are not authorized to access this page...");
         $spcontext.redirect("#/", false);
         globalDefinitions.closeLoader();
