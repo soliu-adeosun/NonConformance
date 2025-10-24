@@ -140,7 +140,7 @@ whenDashboardDependeciesLoaded = function () {
 
             if ((valueToEva.Approval_Status === "Pending" && valueToEva.Current_Approver === globalDefinitions.stageDefinitions.save)) {
                 return editDraftStr;
-            } else if (valueToEva.Approval_Status === "Revise") {
+            } else if (valueToEva.Approval_Status === "Pending" && valueToEva.ReturnForCorrection === "Yes") {
                 return editStr;
             } else if (valueToEva.Approval_Status === "Completed") {
                 return viewStr;
@@ -295,7 +295,7 @@ MainApplication.DashboardComponent.pendingRequests = function () {
             "Modified", "PendingUserEmail", "PendingUserLogin", "Attachment_Folder", "AttachmentURL", "Author",
             "NCReferenceID", "Title", "ISOClause", "ObjectiveEvidence", "NonConformanceStatement", "TypeOfAudit",
             "Process", "Procedure", "RequestDate", "ExpectedDate", "CorrectiveActionName", "ActualDateOfResponse",
-            "RootCause", "Correction", "CorrectiveAction", "HOD", "Employee", "Year"
+            "RootCause", "Correction", "CorrectiveAction", "HOD", "Employee", "Year", "Requirement", "Comment"
         ]
     };
 

@@ -8,7 +8,7 @@ export default class NewRequest extends React.Component<{}, {}> {
     public render(): React.ReactElement {
         return (
             <section className="bg-white p-4 sm:p-6 border border-gray-200 shadow-sm">
-                <h2 className="text-xl sm:text-2xl font-bold text-navy-900 mb-4 sm:mb-6">Management Rep Section</h2>
+                <h2 className="text-xl sm:text-2xl font-bold text-navy-900 mb-4 sm:mb-6">MANAGEMENT REPRESENTATIVE</h2>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
                     <div className="mt-2">
                         <label className="block text-sm font-medium text-blue-600 mb-2">Name</label>
@@ -36,7 +36,7 @@ export default class NewRequest extends React.Component<{}, {}> {
                 </div>
 
 
-                <h2 style={{ marginTop: "2.2rem" }} className="text-xl sm:text-2xl font-bold text-navy-900 mb-4 sm:mb-6">Non-Conformance Section</h2>
+                <h2 style={{ marginTop: "2.2rem" }} className="text-xl sm:text-2xl font-bold text-navy-900 mb-4 sm:mb-6">NON-CONFORMANCE SECTION</h2>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
                     <div className="mt-2">
                         <div className="flex justify-between items-center">
@@ -105,12 +105,21 @@ export default class NewRequest extends React.Component<{}, {}> {
                         />
                     </div>
                     <div className="mt-2">
-                        <label className="block text-sm font-medium text-blue-600 mb-2">Non-Conformance Statement</label>
+                        <label className="block text-sm font-medium text-blue-600 mb-2">Non-Conformance Statement <span className="required">*</span></label>
                         <textarea
                             placeholder="Enter text here..."
                             className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400  focus:ring-2 focus:ring-primary-500  transition-all text-sm sm:text-base"
                             id="nonConformanceStatement"
-                            speed-bind="NonConformanceStatement"
+                            speed-bind-validate="NonConformanceStatement"
+                        />
+                    </div>
+                    <div className="mt-2">
+                        <label className="block text-sm font-medium text-blue-600 mb-2">Requirement <span className="required">*</span></label>
+                        <textarea
+                            placeholder="Enter text here..."
+                            className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400  focus:ring-2 focus:ring-primary-500  transition-all text-sm sm:text-base"
+                            id="requirement"
+                            speed-bind-validate="Requirement"
                         />
                     </div>
 

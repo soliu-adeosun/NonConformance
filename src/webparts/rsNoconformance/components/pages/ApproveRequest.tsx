@@ -7,7 +7,7 @@ export default class ApproveRequest extends React.Component<{}, {}> {
     public render(): React.ReactElement {
         return (
             <section className="bg-white p-4 sm:p-6 border border-gray-200 shadow-sm">
-                <h2 className="text-xl sm:text-2xl font-bold text-navy-900 mb-4 sm:mb-6">Management Rep Section</h2>
+                <h2 className="text-xl sm:text-2xl font-bold text-navy-900 mb-4 sm:mb-6">MANAGEMENT REPRESENTATIVE</h2>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
                     <div className="mt-2">
                         <label className="block text-sm font-medium text-blue-600 mb-2">NC Reference No.</label>
@@ -53,7 +53,7 @@ export default class ApproveRequest extends React.Component<{}, {}> {
                     </div>
                 </div> */}
                 <div>
-                    <h2 style={{ marginTop: "2.2rem" }} className="text-xl sm:text-2xl font-bold text-navy-900 mb-4 sm:mb-6">Non Conformance Issued To:</h2>
+                    <h2 style={{ marginTop: "2.2rem" }} className="block text-sm font-medium text-blue-600 mb-2">Non Conformance Issued To:</h2>
                     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
                         <div className="mt-2">
                             <label className="block text-sm font-medium text-blue-600 mb-2">Employee Name</label>
@@ -119,7 +119,7 @@ export default class ApproveRequest extends React.Component<{}, {}> {
                     </div>
                 </div>
 
-                <h2 style={{ marginTop: "2.2rem" }} className="text-xl sm:text-2xl font-bold text-navy-900 mb-4 sm:mb-6">NonConformance Section</h2>
+                <h2 style={{ marginTop: "2.2rem" }} className="text-xl sm:text-2xl font-bold text-navy-900 mb-4 sm:mb-6">NON-CONFORMANCE SECTION</h2>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
                     <div className="mt-2">
                         <label className="block text-sm font-medium text-blue-600 mb-2">NC Reference No.</label>
@@ -191,6 +191,16 @@ export default class ApproveRequest extends React.Component<{}, {}> {
                             speed-bind="NonConformanceStatement"
                         />
                     </div>
+                    <div className="mt-2">
+                        <label className="block text-sm font-medium text-blue-600 mb-2">Requirement <span className="required">*</span></label>
+                        <textarea
+                            readOnly
+                            speed-bind="Requirement"
+                            placeholder="Enter text here..."
+                            className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400  focus:ring-2 focus:ring-primary-500  transition-all text-sm sm:text-base"
+                            id="requirement"
+                        />
+                    </div>
                 </div>
 
                 {/* Readoly Section Ends Here */}
@@ -229,23 +239,21 @@ export default class ApproveRequest extends React.Component<{}, {}> {
                     </div>
                     <div className="mt-2">
                         <label className="block text-sm font-medium text-blue-600 mb-2">Correction<span className="required">*</span></label>
-                        <input
+                        <textarea
                             speed-bind-class="CorrectionData"
                             speed-bind-validate="Correction"
-                            type="text"
                             placeholder="Enter text here..."
                             className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
-                        />
+                        ></textarea>
                     </div>
                     <div className="mt-2">
                         <label className="block text-sm font-medium text-blue-600 mb-2">Corrective Action<span className="required">*</span></label>
-                        <input
+                        <textarea
                             speed-bind-class="CorrectionData"
                             speed-bind-validate="CorrectiveAction"
-                            type="text"
                             placeholder="Enter text here..."
                             className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
-                        />
+                        ></textarea>
                     </div>
                     <div className="mt-2">
                         <label className="block text-sm font-medium text-blue-600 mb-2">Attach File<span className="required">*</span></label>
@@ -258,7 +266,7 @@ export default class ApproveRequest extends React.Component<{}, {}> {
                     </div>
                 </div>
 
-                <div style={{ marginTop: '2.2rem' }}>
+                <div style={{ marginTop: '2.2rem' }} id="commentBox">
                         <div>
                             <label className="block text-sm font-medium text-blue-600 mb-2">Comment</label>
                             <textarea id="approvercomment"
@@ -266,7 +274,7 @@ export default class ApproveRequest extends React.Component<{}, {}> {
                             speed-bind-validate="Comment"
                             speed-include-control="false"
                             speed-as-static="true"
-                            speed-validate-type="Comments"
+                            speed-validate-type="Comment"
                             speed-event-switch="false"
                             speed-validate-msg="Please tell us why you want to decline the NC!"
                             placeholder="Enter text here..." className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base" defaultValue={""} />

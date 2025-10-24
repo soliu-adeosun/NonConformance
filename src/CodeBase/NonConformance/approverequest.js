@@ -19,7 +19,7 @@ MainApplication.ApproveRequestComponent.ApplicationDetails = function () {
     this.AttachmentLoader = {};
     this.messageTemplate = {};
     this.feedback = false;
-    this.approverComments = "";
+    this.approverComment = "";
     this.transactionHistory = [];
     this.defaultStage = "AA1";
     this.returned = false;
@@ -46,7 +46,7 @@ whenApproveRequestDependeciesLoaded = function () {
 
     $spcontext.filesDictionary = {};
 
-    $spcontext.validationProperties.text.extend["Comments"] = function (field) {
+    $spcontext.validationProperties.text.extend["Comment"] = function (field) {
         var passed = false;
         if ((field.trim() !== "" && (AppRequest.actionTaken === globalDefinitions.stageDefinitions.decline ||
             AppRequest.actionTaken === globalDefinitions.stageDefinitions.correction || AppRequest.actionTaken === "Revise")) ||
@@ -114,8 +114,11 @@ whenApproveRequestDependeciesLoaded = function () {
 		}
 	);
 
+    $("#commentBox").hide();
+    if (AppRequest.mode === "edit" && AppRequest.mode !== null){
+        $("#commentBox").show();
+    }
     $spcontext.applyValidationEvents();
-    // MainApplication.ApproveRequestComponent.dateHandler();
     MainApplication.ApproveRequestComponent.recoverListData();
     setTimeout(function () {
         globalDefinitions.closeLoader();
@@ -151,7 +154,7 @@ MainApplication.ApproveRequestComponent.recoverListData = function() {
             "Modified", "PendingUserEmail", "PendingUserLogin", "Attachment_Folder", "AttachmentURL", "Author",
             "NCReferenceID", "Title", "ISOClause", "ObjectiveEvidence", "NonConformanceStatement", "TypeOfAudit",
             "Process", "Procedure", "RequestDate", "ExpectedDate", "CorrectiveActionName", "ActualDateOfResponse",
-            "RootCause", "Correction", "CorrectiveAction", "HOD", "Employee", "Year"
+            "RootCause", "Correction", "CorrectiveAction", "HOD", "Employee", "Year", "Requirement", "Comment"
         ];
 
         ncRoot.getListToControl(globalDefinitions.stageDefinitions.listname, query, extraProperties, function (listProperties) {
@@ -453,6 +456,7 @@ MainApplication.ApproveRequestComponent.otherApproversReadOnlyForm = function ()
     $(".approversReadOnlyContainer").append(otherApproversForm);
     $(".approver-btn").text("Approve");
     $("#rtnBtn").show();
+    $("#commentBox").show();
     $("#approvercomment").removeAttr("readonly");
 
 }

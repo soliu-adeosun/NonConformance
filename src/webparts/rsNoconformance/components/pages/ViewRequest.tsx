@@ -190,6 +190,16 @@ export default class ViewRequest extends React.Component<{}, {}> {
                             speed-bind="NonConformanceStatement"
                         />
                     </div>
+                    <div className="mt-2">
+                        <label className="block text-sm font-medium text-blue-600 mb-2">Requirement <span className="required">*</span></label>
+                        <textarea
+                            readOnly
+                            speed-bind="Requirement"
+                            placeholder="Enter text here..."
+                            className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400  focus:ring-2 focus:ring-primary-500  transition-all text-sm sm:text-base"
+                            id="requirement"
+                        />
+                    </div>
                 </div>
 
                 {/* Readoly Section Ends Here */}
