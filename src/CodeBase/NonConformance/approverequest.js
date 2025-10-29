@@ -152,7 +152,7 @@ MainApplication.ApproveRequestComponent.recoverListData = function() {
             "ID", "Title", "WorkflowRequestID", "Current_Approver", "Current_Approver_Code", "Approval_Status",
             "Created", "InitiatorEmailAddress", "InitiatorLogin", "Transaction_History", "ReturnForCorrection",
             "Modified", "PendingUserEmail", "PendingUserLogin", "Attachment_Folder", "AttachmentURL", "Author",
-            "NCReferenceID", "Title", "ISOClause", "ObjectiveEvidence", "NonConformanceStatement", "TypeOfAudit",
+            "NCReferenceID", "ISOClause", "ObjectiveEvidence", "NonConformanceStatement", "TypeOfAudit",
             "Process", "Procedure", "RequestDate", "ExpectedDate", "CorrectiveActionName", "ActualDateOfResponse",
             "RootCause", "Correction", "CorrectiveAction", "HOD", "Employee", "Year", "Requirement", "Comment"
         ];
@@ -214,6 +214,7 @@ MainApplication.ApproveRequestComponent.recoverListData = function() {
 
                             if(listProperties.Current_Approver !== "Employee" && listProperties.Current_Approver_Code !== "AA1"){
                                 MainApplication.ApproveRequestComponent.otherApproversReadOnlyForm();
+                                listProperties.Comment = "";
                             }
 
                             AppRequest.requestDetails = listProperties;
@@ -221,9 +222,9 @@ MainApplication.ApproveRequestComponent.recoverListData = function() {
                             $spcontext.htmlBind(listProperties);
 
 
-                            if (AppRequest.requestDetails.Current_Approver !== 'Employee'){
-                                $spcontext.attachmentLinkBind(listProperties.AttachmentURL);
-                            }
+                            // if (AppRequest.requestDetails.Current_Approver !== 'Employee'){
+                            $spcontext.attachmentLinkBind(listProperties.AttachmentURL);
+                            // }
                             
                             MainApplication.ApproveRequestComponent.dateHandler(listProperties.ActualDateOfResponse);
                             globalDefinitions.closeLoader();
@@ -400,7 +401,7 @@ MainApplication.ApproveRequestComponent.otherApproversReadOnlyForm = function ()
                         <label class="block text-sm font-medium text-blue-600 mb-2">Name</label>
                         <input
                             readOnly
-                            speed-bind="CorrectiveActionName"
+                            speed-bind="Title"
                             type="text"
                             placeholder="Enter text here..."
                             class="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"

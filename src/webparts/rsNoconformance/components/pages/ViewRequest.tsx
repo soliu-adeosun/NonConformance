@@ -210,7 +210,7 @@ export default class ViewRequest extends React.Component<{}, {}> {
                         <label className="block text-sm font-medium text-blue-600 mb-2">Name</label>
                         <input
                             readOnly
-                            speed-bind="CorrectiveActionName"
+                            speed-bind="Title"
                             type="text"
                             placeholder="Enter text here..."
                             className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"

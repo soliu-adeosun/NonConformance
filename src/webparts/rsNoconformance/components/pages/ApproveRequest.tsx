@@ -258,7 +258,7 @@ export default class ApproveRequest extends React.Component<{}, {}> {
                     <div className="mt-2">
                         <label className="block text-sm font-medium text-blue-600 mb-2">Attach File<span className="required">*</span></label>
                         <input
-                            speed-file-bind="SupportingDocuments"
+                            speed-file-validate="SupportingDocuments"
                             type="file"
                             className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
                         />
