@@ -126,6 +126,19 @@ function whenNewRequestDependeciesLoaded() {
 
 
     MainApplication.NewRequestComponent.dateHandler();
+    $("#requestDate").on("change", function() {
+        const dateValue = this.value;
+
+        if (!dateValue) return;
+
+        const selectedDate = new Date(dateValue + 'T00:00:00');
+        const tomorrow = new Date(selectedDate);
+        tomorrow.setDate(selectedDate.getDate() + 1);
+
+        const minDate = tomorrow.toISOString().slice(0, 10);
+
+        $("#expectedDate").attr("min", minDate);
+    });
 
     if (!MainApplication.isUserAnActor){
         globalDefinitions.HandlerError("You are not authorized to access this page...");
@@ -247,7 +260,7 @@ MainApplication.NewRequestComponent.dateHandler = function () {
 
     // Set Request Date default to today
     $('#requestDate').val(todayStr);
-    $('#requestDate').attr('readOnly', true);
+    // $('#requestDate').attr('readOnly', true);
 
     // Set Expected Date min to tomorrow
     const tomorrow = new Date(today);

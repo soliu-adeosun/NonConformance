@@ -84,7 +84,7 @@ whenDashboardDependeciesLoaded = function () {
             var approvalStr = `
                 <div class="flex space-x-1 sm:space-x-2">
                     ${isActor ? `
-                    <a title="Approval" href="#/approverequest?itemId=${valueToEva.WorkflowRequestID}" 
+                    <a title="Action" href="#/approverequest?itemId=${valueToEva.WorkflowRequestID}" 
                         class="p-1 sm:p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-100 transition-colors">
                         <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
                             <path fill-rule="evenodd" d="M11.986 3H12a2 2 0 0 1 2 2v6a2 2 0 0 1-1.5 1.937V7A2.5 2.5 0 0 0 10 4.5H4.063A2 2 0 0 1 6 3h.014A2.25 2.25 0 0 1 8.25 1h1.5a2.25 2.25 0 0 1 2.236 2ZM10.5 4v-.75a.75.75 0 0 0-.75-.75h-1.5a.75.75 0 0 0-.75.75V4h3Z" clip-rule="evenodd" />

@@ -63,7 +63,6 @@ export default class NewRequest extends React.Component<{}, {}> {
                     <div className="mt-2">
                         <label className="block text-sm font-medium text-blue-600 mb-2">Objective Evidence</label>
                         <input
-                            readOnly
                             type="text"
                             placeholder="Enter text here..."
                             className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400  focus:ring-2 focus:ring-primary-500  transition-all text-sm sm:text-base"
@@ -128,12 +127,12 @@ export default class NewRequest extends React.Component<{}, {}> {
                 <div>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
 
-                        <div className="mt-2">
+                        <div className="mt-5">
                             <label className="block text-sm font-medium text-blue-600 mb-2">Non Conformance Issued To: <span className="required">*</span></label>
                             <CustomPeoplePicker validate-control="true" custom-people="Employee" validation-msg="Please select an employee" />
                         </div>
                     </div>
-                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8 mt-5">
                         <div className="mt-2">
                             <label className="block text-sm font-medium text-blue-600 mb-2">Employee Name</label>
                             <input readOnly id="employeeName" speed-bind="EmployeeName" type="text" placeholder="Enter text here..." className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-40  focus:ring-2 focus:ring-primary-500  transition-all text-sm sm:text-base" />
@@ -172,16 +171,16 @@ export default class NewRequest extends React.Component<{}, {}> {
                             />
                         </div>
                         <div className="mt-2">
-                            <label className="block text-sm font-medium text-blue-600 mb-2">Request Date</label>
+                            <label className="block text-sm font-medium text-blue-600 mb-2">Request Date <span className="required">*</span></label>
                             <input
                                 type="date"
                                 className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400  focus:ring-2 focus:ring-primary-500  transition-all text-sm sm:text-base"
-                                speed-bind="RequestDate"
+                                speed-bind-validate="RequestDate"
                                 id="requestDate"
                             />
                         </div>
                         <div className="mt-2">
-                            <label className="block text-sm font-medium text-blue-600 mb-2">Expected Date</label>
+                            <label className="block text-sm font-medium text-blue-600 mb-2">Expected Date <span className="required">*</span></label>
                             <input
                                 type="date"
                                 className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400  focus:ring-2 focus:ring-primary-500  transition-all text-sm sm:text-base"
