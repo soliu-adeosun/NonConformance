@@ -192,7 +192,7 @@ export default class ApproveRequest extends React.Component<{}, {}> {
                         />
                     </div>
                     <div className="mt-2">
-                        <label className="block text-sm font-medium text-blue-600 mb-2">Requirement <span className="required">*</span></label>
+                        <label className="block text-sm font-medium text-blue-600 mb-2">Requirement</label>
                         <textarea
                             readOnly
                             speed-bind="Requirement"
@@ -206,7 +206,7 @@ export default class ApproveRequest extends React.Component<{}, {}> {
                 {/* Readoly Section Ends Here */}
 
                 <h2 style={{ marginTop: "2.2rem" }} className="text-xl sm:text-2xl font-bold text-navy-900 mb-4 sm:mb-6">Correction and Corrective Action Section</h2>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 approversReadOnlyContainer">
+                <div id="approversReadOnlyContainer" className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
                     <div className="mt-2">
                         <label className="block text-sm font-medium text-blue-600 mb-2">Name</label>
                         <input
@@ -284,13 +284,13 @@ export default class ApproveRequest extends React.Component<{}, {}> {
                 <div className="action-btns flex justify-center items-center gap-3" style={{ marginTop: "2rem" }}>
                     <ClientButton
                         text={"Submit"}
-                        func={"MainApplication.ApproveRequestComponent.confirmSubmit"}
+                        func={"ApproveRequestComponent.confirmSubmit"}
                         clax={"px-4 py-2 bg-slate-700 text-white text-sm font-medium hover:bg-slate-800 transition-colors approver-btn"}
                         prop="Approved"
                         attr=""
                     />
 
-                    <ClientButton text={"Decline"} func={"MainApplication.ApproveRequestComponent.confirmSubmit"} clax={"px-4 py-2 bg-slate-500 text-white text-sm font-medium hover:bg-slate-600 transition-colors hidden"} prop="Revise" attr="id='rtnBtn'" />
+                    <ClientButton text={"Decline"} func={"ApproveRequestComponent.confirmSubmit"} clax={"px-4 py-2 bg-slate-500 text-white text-sm font-medium hover:bg-slate-600 transition-colors hidden"} prop="Revise" attr="id='rtnBtn'" />
                     {/* <button id="saveButton" className="px-4 py-2 bg-slate-500 text-white text-sm font-medium hover:bg-slate-600 transition-colors">
                             Save
                         </button> */}

@@ -140,12 +140,12 @@ MainApplication.ApproveRequestComponent.recoverListData = function() {
                 type: 'Text',
                 val: AppRequest.itemId
             },
-            // {
-            //     operator: 'Eq',
-            //     field: 'Approval_Status',
-            //     type: 'Text',
-            //     val: globalDefinitions.stageDefinitions.pending
-            // }
+            {
+                operator: 'Eq',
+                field: 'Approval_Status',
+                type: 'Text',
+                val: globalDefinitions.stageDefinitions.pending
+            }
         ]);
         
         var extraProperties = [
@@ -154,7 +154,7 @@ MainApplication.ApproveRequestComponent.recoverListData = function() {
             "Modified", "PendingUserEmail", "PendingUserLogin", "Attachment_Folder", "AttachmentURL", "Author",
             "NCReferenceID", "ISOClause", "ObjectiveEvidence", "NonConformanceStatement", "TypeOfAudit",
             "Process", "Procedure", "RequestDate", "ExpectedDate", "CorrectiveActionName", "ActualDateOfResponse",
-            "RootCause", "Correction", "CorrectiveAction", "HOD", "Employee", "Year", "Requirement", "Comment"
+            "RootCause", "Correction", "CorrectiveAction", "HOD", "Employee", "Year", "Requirement", "Comment", "EmployeeEmail", "HODEmail"
         ];
 
         ncRoot.getListToControl(globalDefinitions.stageDefinitions.listname, query, extraProperties, function (listProperties) {
@@ -165,13 +165,12 @@ MainApplication.ApproveRequestComponent.recoverListData = function() {
                 
             }
             else {
-                customWorkflowEngine.routeEngine(customWorkflowEngine).updateRoutesinFlow(listProperties, function (resolved) {
-                    customWorkflowEngine.routeEngine(customWorkflowEngine).
-                    PageSecurity(customWorkflowEngine.stages.securityModeTask, listProperties.Current_Approver, listProperties.Approval_Status,
-                        function (error) {
-
-                        // if (MainApplication.configuredTaskMembers[listProperties.Current_Approver].belongs) {
-                        if (typeof error === "undefined") {
+                // customWorkflowEngine.routeEngine(customWorkflowEngine).updateRoutesinFlow(listProperties, function (resolved) {
+                //     customWorkflowEngine.routeEngine(customWorkflowEngine).
+                //     PageSecurity(customWorkflowEngine.stages.securityModeTask, listProperties.Current_Approver, listProperties.Approval_Status,
+                //         function (error) {
+                        if (listProperties.Current_Approver === "Management Rep" || listProperties.Current_Approver === "CEO" || listProperties.Current_Approver === "Employee" || listProperties.Current_Approver === "HOD") {
+                        // if (typeof error === "undefined") {
                             
                             listProperties.Created = $spcontext.stringnifyDate({
                                 value: listProperties.Created
@@ -240,9 +239,9 @@ MainApplication.ApproveRequestComponent.recoverListData = function() {
                             }, 1000);
                             $spcontext.redirect("#/", false);
                         }
-                    }); //commented here
+                    // }); //commented here
                     
-                }); //commented here
+                // }); //commented here
             }
         });
     } else {
@@ -273,12 +272,13 @@ MainApplication.ApproveRequestComponent.saveDataToList = function (actionTaken) 
 
     if ($spcontext.checkPassedValidation()) {
 
-        if (CurrentUserProperties.title === AppRequest.requestDetails.Title) {
-            var formData = $spcontext.bind({}, "CorrectionData");
-        } else{
-            var formData = {};
-        }
+        // if (CurrentUserProperties.email === AppRequest.requestDetails.EmployeeEmail) {
+        //     var formData = $spcontext.bind({}, "CorrectionData");
+        // } else{
+        //     var formData = {};
+        // }
 
+        var formData = $spcontext.bind({}, "CorrectionData");
 
         AppRequest.comment = $("#approvercomment").val();
         formData.Comment = AppRequest.comment;
@@ -289,12 +289,15 @@ MainApplication.ApproveRequestComponent.saveDataToList = function (actionTaken) 
             action: actionTaken
         };
 
-
-
         formData = customWorkflowEngine.routeEngine(customWorkflowEngine).requestHistoryHandler(formData, AppRequest.requestDetails.Transaction_History, historyProp);
         
         if (actionTaken === "Approved" || actionTaken === "Declined") {
+            
             formData = customWorkflowEngine.routeEngine(customWorkflowEngine).runRouting(formData, AppRequest.requestDetails.Current_Approver_Code, actionTaken);
+            if (AppRequest.requestDetails.Current_Approver_Code === "AA1"){
+                formData.PendingUserLogin = AppRequest.requestDetails.HODEmail;
+                formData.PendingUserEmail = AppRequest.requestDetails.HODEmail;
+            }
         } else if (actionTaken === "Revise") {
             formData.Current_Approver = globalDefinitions.stageDefinitions.employee;
             formData.Current_Approver_Code = AppRequest.defaultStage;
@@ -428,23 +431,21 @@ MainApplication.ApproveRequestComponent.otherApproversReadOnlyForm = function ()
                     </div>
                     <div class="mt-2">
                         <label class="block text-sm font-medium text-blue-600 mb-2">Correction</label>
-                        <input
+                        <textarea
                             readOnly
                             speed-bind="Correction"
-                            type="text"
                             placeholder="Enter text here..."
                             class="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
-                        />
+                        ></textarea>
                     </div>
                     <div class="mt-2">
                         <label class="block text-sm font-medium text-blue-600 mb-2">Corrective Action</label>
-                        <input
+                        <textarea
                             readOnly
                             speed-bind="CorrectiveAction"
-                            type="text"
                             placeholder="Enter text here..."
                             class="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
-                        />
+                        ></textarea>
                     </div>
                     <div class="mt-2">
                         <label class="block text-sm font-medium text-blue-600 mb-2">Attach File</label>
@@ -453,8 +454,8 @@ MainApplication.ApproveRequestComponent.otherApproversReadOnlyForm = function ()
                 
     `;
 
-    $(".approversReadOnlyContainer").empty();
-    $(".approversReadOnlyContainer").append(otherApproversForm);
+    $("#approversReadOnlyContainer").empty();
+    $("#approversReadOnlyContainer").append(otherApproversForm);
     $(".approver-btn").text("Approve");
     $("#rtnBtn").show();
     $("#commentBox").show();

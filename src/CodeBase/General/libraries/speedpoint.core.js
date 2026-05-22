@@ -69,7 +69,8 @@ function Speed(cxt, bolval) {
     }
 
     this.libraryDictionary = {};
-
+    this.usersInEnvironmentById = {};
+    this.usersInEnvironmentByIdArary = [];
     this.dynamicTableSettings = {};
     /**
      * Properties for the table to be created
@@ -100,6 +101,7 @@ function Speed(cxt, bolval) {
         onpageBeforeclick: null,
         onpageAfterclick: null,
         sortToggle: null,
+        sortingEnabled: true,
         controls: [],
         //this is responsible for paginating the table
         paginateLinks: function (srt, end, settings) {
@@ -902,8 +904,9 @@ Speed.prototype.CheckNoofUsedFields = function (Arr, val) {
     }
 };
 
-Speed.prototype.formQueryArrayGenerator = function (listObjects) {
+Speed.prototype.formQueryArrayGenerator = function (listObjects, bindClass) {
     speedPointContext = this;
+    var useBindClass = (typeof bindClass === 'string') ? true : false;
     var returnObject = [];
     if (typeof listObjects !== "undefined" && listObjects != null) {
         returnObject = listObjects;
@@ -913,7 +916,7 @@ Speed.prototype.formQueryArrayGenerator = function (listObjects) {
 
     var element = document.querySelectorAll("[speed-bind-query]");
     for (var i = 0; i <= (element.length - 1); i++) {
-        var propertyAttributes = {}
+        var propertyAttributes = {};
         propertyAttributes.field = (element[i].getAttribute("speed-query-columnname") === null) ? element[i].getAttribute("speed-bind-query") : element[i].getAttribute("speed-query-columnname");
         if (element[i].getAttribute("speed-evaluator") !== null) {
             propertyAttributes.evaluator = element[i].getAttribute("speed-evaluator");
@@ -922,7 +925,14 @@ Speed.prototype.formQueryArrayGenerator = function (listObjects) {
         propertyAttributes.operator = (element[i].getAttribute("speed-operator") === null) ? "Eq" : element[i].getAttribute("speed-operator");
         propertyAttributes.type = (element[i].getAttribute("speed-type") === null) ? "Text" : element[i].getAttribute("speed-type");
         propertyAttributes.val = "";
+
         var omitControl = (element[i].getAttribute("speed-as-static") === null) ? false : (element[i].getAttribute("speed-as-static").toLowerCase() === "true");
+        if (useBindClass) {
+            var controlClass = (element[i].getAttribute("speed-bind-class") === null) ? "" : element[i].getAttribute("speed-bind-class").toLowerCase();
+            if (controlClass != bindClass.toLowerCase()) {
+                omitControl = true;
+            }
+        }
         if (!omitControl && element[i].getAttribute("speed-operator") !== null) {
             if (element[i].tagName.toLowerCase() == "input" || element[i].tagName.toLowerCase() == "select" || element[i].tagName.toLowerCase() == "textarea") {
                 if (element[i].type == "checkbox") {
@@ -962,6 +972,12 @@ Speed.prototype.formQueryArrayGenerator = function (listObjects) {
             value: "TRUE"
         };
         var omitControl = (element[i].getAttribute("speed-as-static") === null) ? false : (element[i].getAttribute("speed-as-static").toLowerCase() === "true");
+        if (useBindClass) {
+            var controlClass = (element[i].getAttribute("speed-bind-class") === null) ? "" : element[i].getAttribute("speed-bind-class").toLowerCase();
+            if (controlClass != bindClass.toLowerCase()) {
+                omitControl = true;
+            }
+        }
         if (!omitControl && element[i].getAttribute("speed-operator") !== null) {
             var value = $spcontext.checkNull(element[i].getAttribute("speed-userid"));
             propertyAttributes.val = value;
@@ -1496,10 +1512,10 @@ Speed.prototype.bind = function (listObjects, bindClass, bindGroup) {
 
         var objproperties = [];
         $("#" + inputid + " > thead > tr > th").each(function () {
-            if (this.getAttribute("speed-array-prop") !== null){
+            if (this.getAttribute("speed-array-prop") !== null) {
                 objproperties.push(this.getAttribute("speed-array-prop"));
             }
-            else if (this.getAttribute("speed-array-func") !== null){
+            else if (this.getAttribute("speed-array-func") !== null) {
                 objproperties.push(this.getAttribute("speed-array-func"));
             }
         });
@@ -2109,33 +2125,34 @@ Speed.prototype.getControls = function (onlyTables, tableGroupId, bindClass) {
                     element[i].addEventListener("click", function (evt) {
                         var mainProperty = evt.srcElement.getAttribute("speed-table-data");
                         speedContext.DataForTable.tdClick[mainProperty] = (speedContext.DataForTable.tdClick[mainProperty]) ? false : true;
+                        if (speedContext.DataForTable.sortingEnabled) {
+                            speedContext.DataForTable.tabledata.sort(function (a, b) {
+                                //triggers when sorting is activated on table headers
+                                if (typeof speedContext.DataForTable.sortToggle === "function") {
+                                    speedContext.DataForTable.sortToggle();
+                                }
 
-                        speedContext.DataForTable.tabledata.sort(function (a, b) {
-                            //triggers when sorting is activated on table headers
-                            if (typeof speedContext.DataForTable.sortToggle === "function") {
-                                speedContext.DataForTable.sortToggle();
-                            }
-                            if (speedContext.DataForTable.tdClick[mainProperty]) {
-                                if (a[mainProperty] < b[mainProperty]) {
-                                    return -1;
+                                if (speedContext.DataForTable.tdClick[mainProperty]) {
+                                    if (a[mainProperty] < b[mainProperty]) {
+                                        return -1;
+                                    }
+                                    if (a[mainProperty] > b[mainProperty]) {
+                                        return 1;
+                                    }
+                                    return 0;
+                                } else {
+                                    if (a[mainProperty] > b[mainProperty]) {
+                                        return -1;
+                                    }
+                                    if (a[mainProperty] < b[mainProperty]) {
+                                        return 1;
+                                    }
+                                    return 0;
                                 }
-                                if (a[mainProperty] > b[mainProperty]) {
-                                    return 1;
-                                }
-                                return 0;
-                            } else {
-                                if (a[mainProperty] > b[mainProperty]) {
-                                    return -1;
-                                }
-                                if (a[mainProperty] < b[mainProperty]) {
-                                    return 1;
-                                }
-                                return 0;
-                            }
+                            });
 
-                        });
-
-                        speedContext.manualTable(speedContext.DataForTable.tabledata);
+                            speedContext.manualTable(speedContext.DataForTable.tabledata);
+                        }
                     });
                 }
             }
@@ -2526,17 +2543,19 @@ Speed.prototype.htmlBind = function (listObjects, bindExtensions, bindClass) {
                     }
 
                     for (var x = 0; x <= (columnValue.length - 1); x++) {
-                        var str = "<tr id='spbindtr" + key + x + "'>";
-                        if (useSerialNo) str += "<td><label class='speed-serialno'>" + (x + 1) + "</label></td>";
-                        for (var y = 0; y < colproperties.length; y++) {
-                            if (typeof colproperties[y] == "string") {
-                                str += "<td><label class='speed-table-include'>" + $spcontext.replaceSpecialkeysinString(columnValue[x][colproperties[y]]) + "</label></td>";
-                            } else {
-                                str += "<td>" + colproperties[y].execute(x, columnValue[x][colproperties[y].title], columnValue[x]) + "</td>";
+                        if(!$.isEmptyObject(columnValue[x])){
+                            var str = "<tr id='spbindtr" + key + x + "'>";
+                            if (useSerialNo) str += "<td><label class='speed-serialno'>" + (x + 1) + "</label></td>";
+                            for (var y = 0; y < colproperties.length; y++) {
+                                if (typeof colproperties[y] == "string") {
+                                    str += "<td><label class='speed-table-include'>" + $spcontext.replaceSpecialkeysinString(columnValue[x][colproperties[y]]) + "</label></td>";
+                                } else {
+                                    str += "<td>" + colproperties[y].execute(x, columnValue[x][colproperties[y].title], columnValue[x]) + "</td>";
+                                }
                             }
+                            str += "</tr>";
+                            $("#" + inputid + " > tbody").append(str);
                         }
-                        str += "</tr>";
-                        $("#" + inputid + " > tbody").append(str);
                     }
                 }
 
@@ -2631,7 +2650,6 @@ Speed.prototype.htmlBind = function (listObjects, bindExtensions, bindClass) {
         }
     }
 }
-
 
 Speed.prototype.dynamicTable = function (key, config) {
     var speedContext = this;
@@ -2923,23 +2941,34 @@ Speed.prototype.attachmentLinkBind = function (attachments) {
             elementProp.property = element[i].getAttribute("speed-file-bind");
             elementProp.propertyname = (typeof element[i].getAttribute("speed-property-asname") === null) ? false : element[i].getAttribute("speed-property-asname");
             elementProp.name = (typeof element[i].getAttribute("speed-file-name") === null) ? elementProp.property : element[i].getAttribute("speed-file-name");
+            elementProp.clearlabel = (typeof element[i].getAttribute("speed-clear-label") === null) ? true : (element[i].getAttribute("speed-clear-label") === "true");
             elementProp.id = element[i].id;
             if (element[i].tagName.toLowerCase() === "div" || element[i].tagName.toLowerCase() === "p") {
                 if ($.type(attachments) === "object") {
                     var attachmentLinks = attachments[elementProp.property];
 
                     if (typeof attachmentLinks !== "undefined") {
+                        if(elementProp.clearlabel){
+                            $(element[i]).empty();
+                        }
+                        
                         if (typeof attachmentLinks.files !== "undefined") {
                             attachmentLinks = attachmentLinks.files;
                         }
                         for (var x = 0; x < attachmentLinks.length; x++) {
-                            var displayName = elementProp.name;
-                            if (!elementProp.propertyname) {
-                                var splitedLinks = attachmentLinks[x].split("/");
-                                var pos = splitedLinks.length - 1;
-                                displayName = splitedLinks[pos];
+                            if (Object.hasOwn(attachmentLinks[x], 'dataURI')) {
+                                $(element[i]).append("<p class=\"speed-attachment\">" + attachmentLinks[x].dataName + "</p>");
                             }
-                            $(element[i]).append("<p class=\"speed-attachment\"><a data-interception='off' target=\"_blank\" href=\"" + attachmentLinks[x] + "\">" + displayName + "</p>");
+                            else {
+                                var displayName = elementProp.name;
+                                if (!elementProp.propertyname) {
+                                    var splitedLinks = attachmentLinks[x].split("/");
+                                    var pos = splitedLinks.length - 1;
+                                    displayName = splitedLinks[pos];
+                                }
+                                $(element[i]).append("<p class=\"speed-attachment\"><a data-interception='off' target=\"_blank\" href=\"" + attachmentLinks[x] + "\">" + displayName + "</a></p>");
+                            }
+
                         }
                     }
                 }
@@ -2948,7 +2977,6 @@ Speed.prototype.attachmentLinkBind = function (attachments) {
     }
 }
 
-//Directly bind list to html select
 //Directly bind list to html select
 Speed.prototype.bindListDirectives = function (properties, onFailed, appContext) {
     var spContext = this;
@@ -3985,13 +4013,20 @@ Speed.prototype.createColumnInList = function (arr, listName, onSuccess, onFaile
     });
 }
 
-
-Speed.prototype.getColumnsInList = function (listName, onSuccess, onFailed, appContext) {
+Speed.prototype.getColumnsInList = function (listProperties, onSuccess, onFailed, appContext) {
     var speedContext = this;
+    var listName = (typeof listProperties === "string") ? listProperties : listProperties.title;
+    var useContentType = (typeof listProperties.useContentType === "undefined") ? false : listProperties.useContentType;
     var onFailedCall = (typeof onFailed === 'undefined' || onFailed == null) ? this.errorHandler : onFailed;
     var context = this.initiate();
     var genericList = context.get_web().get_lists().getByTitle(listName);
-    var listFields = genericList.get_fields();
+    var listFields;
+    if (useContentType) {
+        listFields = genericList.get_contentTypes()
+    }
+    else {
+        listFields = genericList.get_fields()
+    }
     if (typeof appContext !== 'undefined') {
         context = appContext.initiate();
     }
@@ -4001,9 +4036,53 @@ Speed.prototype.getColumnsInList = function (listName, onSuccess, onFailed, appC
 
     context.load(window.speedGlobal[total]);
     context.executeQueryAsync(function () {
-        setTimeout(function () {
-            onSuccess(window.speedGlobal[total], listName);
-        }, speedContext.latency);
+        if (useContentType) {
+            setTimeout(function () {
+                var contentTypeContext = null;
+                var oEnumerator = window.speedGlobal[total].getEnumerator();
+                while (oEnumerator.moveNext()) {
+                    var oField = oEnumerator.get_current();
+                    var title = oField.get_name();
+                    if (title.toLowerCase() === listProperties.contentType.toLowerCase()) {
+                        contentTypeContext = oField;
+                        break;
+                    }
+                }
+
+                if (contentTypeContext === null) {
+                    onFailedCall({
+                        name: "getColumnsInList",
+                        context: speedContext,
+                        err_description: `content type ${listProperties.contentType} not found`,
+                        resource: listName
+                    });
+                }
+                else {
+                    var fieldLinks = contentTypeContext.get_fieldLinks();
+                    context.load(fieldLinks);
+                    context.executeQueryAsync(function () {
+                        setTimeout(function () {
+                            onSuccess(fieldLinks, listProperties);
+                        }, speedContext.latency);
+                    },
+                        function (sender, args) {
+                            speedContext.checkConnectionLatency();
+                            onFailedCall(sender, args, {
+                                name: "getColumnsInList",
+                                context: speedContext,
+                                err_description: "",
+                                resource: listName
+                            });
+                        });
+                }
+            }, speedContext.latency);
+        }
+        else {
+            setTimeout(function () {
+                onSuccess(window.speedGlobal[total], listProperties);
+            }, speedContext.latency);
+        }
+
     }, function (sender, args) {
         speedContext.checkConnectionLatency();
         onFailedCall(sender, args, {
@@ -4011,6 +4090,69 @@ Speed.prototype.getColumnsInList = function (listName, onSuccess, onFailed, appC
             context: speedContext,
             err_description: "",
             resource: listName
+        });
+    });
+}
+
+Speed.prototype.getContentTypeColumnsInSite = function (contentType, onSuccess, onFailed, appContext) {
+    var speedContext = this;
+    var onFailedCall = (typeof onFailed === 'undefined' || onFailed == null) ? this.errorHandler : onFailed;
+    var context = this.initiate();
+    var siteContentTypes = context.get_web().get_contentTypes();
+    if (typeof appContext !== 'undefined') {
+        context = appContext.initiate();
+    }
+    window.speedGlobal.push(siteContentTypes);
+    var total = window.speedGlobal.length;
+    total--;
+
+    context.load(window.speedGlobal[total]);
+    context.executeQueryAsync(function () {
+        var targetCT = null;
+        var oEnumerator = window.speedGlobal[total].getEnumerator();
+        while (oEnumerator.moveNext()) {
+            var ct = oEnumerator.get_current();
+            if (ct.get_name().toLowerCase() === contentType.toLowerCase()) {          // or ct.get_id().toString()
+                targetCT = ct;
+                break;
+            }
+        }
+
+        var fieldLinks = targetCT.get_fieldLinks();
+        context.load(fieldLinks);
+        context.executeQueryAsync(function () {
+            setTimeout(function () {
+                var contentTypeFields = {};
+                var oEnumerator = fieldLinks.getEnumerator();
+                while (oEnumerator.moveNext()) {
+                    var oField = oEnumerator.get_current();
+                    var title = oField.get_name();
+                    contentTypeFields[title] = {
+                        column: title,
+                        required: oField.get_required(),
+                        hidden: oField.get_hidden(),
+                    };
+                }
+                onSuccess(contentTypeFields, contentType);
+            }, speedContext.latency);
+        },
+            function (sender, args) {
+                speedContext.checkConnectionLatency();
+                onFailedCall(sender, args, {
+                    name: "getContentTypesInSite",
+                    context: speedContext,
+                    err_description: "",
+                    resource: contentType
+                });
+            });
+
+    }, function (sender, args) {
+        speedContext.checkConnectionLatency();
+        onFailedCall(sender, args, {
+            name: "getContentTypesInSite",
+            context: speedContext,
+            err_description: "",
+            resource: contentType
         });
     });
 }
@@ -4163,7 +4305,7 @@ Speed.prototype.createItems = function (arr, listProperties, onSuccess, onFailed
                                     name: "createItems",
                                     context: speedContext,
                                     err_description: "failed to create roles for items created",
-                                    resource: foldername
+                                    resource: listProperties.listName
                                 });
                             });
                         }
@@ -4256,16 +4398,16 @@ Speed.prototype.getItem = function (listName, caml, onSuccess, onFailed, appCont
     var onFailedCall = (typeof onFailed === 'undefined' || onFailed == null) ? this.errorHandler : onFailed;
     var query = (typeof caml === '' || caml == null) ? this.camlBuilder() : caml;
     var getListBy = (typeof listName === "string") ? "Title" : listName.getBy;
-    if(typeof listName === "object"){
+    if (typeof listName === "object") {
         listName = listName.checker;
     }
-    
+
     var context = this.initiate();
     var oList;
-    if(getListBy === "Title"){
+    if (getListBy === "Title") {
         oList = context.get_web().get_lists().getByTitle(listName);
     }
-    else{
+    else {
         oList = context.get_web().get_lists().getById(listName);
     }
     var camlQuery = new SP.CamlQuery();
@@ -4331,10 +4473,11 @@ Speed.prototype.getListToControl = function (listName, caml, controls, onSuccess
     if (typeof appContext !== 'undefined') {
         context = appContext.initiate();
     }
-
+    var emailChecker = [];
+    var peopleColumns = [];
+    var objectToReturn = {};
     context.load(window.speedGlobal[total]);
     context.executeQueryAsync(function () {
-        var objectToReturn = {};
         var items = window.speedGlobal[total].getItemAtIndex(0);
 
         if (typeof items !== "undefined") {
@@ -4359,15 +4502,23 @@ Speed.prototype.getListToControl = function (listName, caml, controls, onSuccess
                     objProp.value = speedContext.checkNull(items.get_item(controlsToUse[i]).get_lookupValue());
                     if (SPFieldType.toLowerCase() === "sp.fielduservalue" || (nopropinJSEngine && SPFieldType.toLowerCase() === "object")) {
                         try {
-                            objProp.email = speedContext.checkNull(items.get_item(controlsToUse[i]).get_email());
+                            objProp.email = items.get_item(controlsToUse[i]).get_email();
                         } catch (e) {
                             objProp.email = "";
                         };
+
+                        if (objProp.email == null && $.inArray(objProp.id, speedContext.usersInEnvironmentByIdArary) < 0) {
+                            var userCtx = context.get_web().get_siteUsers().getById(objProp.id);
+                            speedContext.usersInEnvironmentByIdArary.push(objProp.id);
+                            emailChecker.push(userCtx);
+                            peopleColumns.push(controlsToUse[i]);
+                        }
                     }
                     objectToReturn[controlsToUse[i]] = objProp;
                 } else if (SPFieldType.toLowerCase() === "array") {
                     var multiUser = items.get_item(controlsToUse[i]);
                     var arrayToSave = [];
+                    var isUserColumn = false;
                     for (var j = 0; j <= (multiUser.length - 1); j++) {
                         var objectOfUsers = {};
                         objectOfUsers.id = multiUser[j].get_lookupId();
@@ -4377,7 +4528,18 @@ Speed.prototype.getListToControl = function (listName, caml, controls, onSuccess
                         } catch (e) {
                             objectOfUsers.email = "";
                         };
+
+                        if (objectOfUsers.email === null && $.inArray(objectOfUsers.id, speedContext.usersInEnvironmentByIdArary) < 0) {
+                            isUserColumn = true;
+                            var userCtx = context.get_web().get_siteUsers().getById(objectOfUsers.id);
+                            speedContext.usersInEnvironmentByIdArary.push(objectOfUsers.id);
+                            emailChecker.push(userCtx);
+                        }
                         arrayToSave.push(objectOfUsers);
+                    }
+
+                    if (isUserColumn) {
+                        peopleColumns.push(controlsToUse[i]);
                     }
                     objectToReturn[controlsToUse[i]] = arrayToSave;
                 }
@@ -4389,14 +4551,24 @@ Speed.prototype.getListToControl = function (listName, caml, controls, onSuccess
                         items.get_item(controlsToUse[i])
                     }
                     catch (e) {
-                        throw `${controlsToUse[i]} doesnt exist in this list`;
+                        throw `${controlsToUse[i]} doesnt exist in this list (${listName})`;
                     }
                     objectToReturn[controlsToUse[i]] = speedContext.checkNull(items.get_item(controlsToUse[i]));
                 }
             }
         }
-        onSuccess(objectToReturn);
-        speedContext.asyncManager(listName);
+
+        if (emailChecker.length === 0) {
+            onSuccess(objectToReturn);
+            speedContext.asyncManager(listName);
+        }
+        else {
+            getUserInformation(0, function () {
+                onSuccess(objectToReturn);
+                speedContext.asyncManager(listName);
+            });
+        }
+
     }, function (sender, args) {
         speedContext.checkConnectionLatency();
         onFailedCall(sender, args, {
@@ -4406,6 +4578,46 @@ Speed.prototype.getListToControl = function (listName, caml, controls, onSuccess
             resource: listName
         });
     });
+
+    function getUserInformation(pos, callback) {
+        context.load(emailChecker[pos]);
+        context.executeQueryAsync(function () {
+            var email = emailChecker[pos].get_email();
+            var id = emailChecker[pos].get_id();
+            speedContext.usersInEnvironmentById[id] = email;
+            if (pos < (emailChecker.length - 1)) {
+                pos++;
+                getUserInformation(pos, callback);
+            }
+            else {
+                for (var y = 0; y < peopleColumns.length; y++) {
+                    if (Array.isArray(objectToReturn[peopleColumns[y]])) {
+                        var userdetail = objectToReturn[peopleColumns[y]];
+                        for (var z = 0; z < userdetail.length; z++) {
+                            if (typeof speedContext.usersInEnvironmentById[userdetail[z].id] !== "undefined") {
+                                objectToReturn[peopleColumns[y]][z].email = speedContext.usersInEnvironmentById[userdetail[z]];
+                            }
+                        }
+                    }
+                    else {
+                        if (typeof speedContext.usersInEnvironmentById[objectToReturn[peopleColumns[y]].id] !== "undefined") {
+                            objectToReturn[peopleColumns[y]].email = speedContext.usersInEnvironmentById[objectToReturn[peopleColumns[y]].id];
+                        }
+                    }
+                }
+                callback();
+            }
+        },
+            function (sender, args) {
+                speedContext.checkConnectionLatency();
+                onFailedCall(sender, args, {
+                    name: "getListToControl(Email Checker)",
+                    context: speedContext,
+                    err_description: "",
+                    resource: listName
+                });
+            });
+    }
 }
 
 /**
@@ -4421,6 +4633,10 @@ Speed.prototype.getListToControl = function (listName, caml, controls, onSuccess
  */
 Speed.prototype.getListToItems = function (listName, caml, controls, tableonly, conditions, onSuccess, onFailed, appContext) {
     var SpeedContext = this;
+    var context = SpeedContext.initiate();
+    var emailChecker = [];
+    var peopleColumns = [];
+    var listItems = [];
     var tableId = typeof controls.tableid !== "" ? controls.tableid : "";
     var controlArray = [];
     var pageControls = typeof controls.useTableControls === "undefined" ? true : controls.useTableControls;
@@ -4475,12 +4691,10 @@ Speed.prototype.getListToItems = function (listName, caml, controls, tableonly, 
         if (Array.isArray(caml)) {
             caml = SpeedContext.camlBuilder(caml);
         }
-
         SpeedContext.getItem(
             listName,
             caml,
             function (itemProperties) {
-                var listItems = [];
                 var listEnumerator = itemProperties.getEnumerator();
                 while (listEnumerator.moveNext()) {
                     var objectToReturn = {};
@@ -4503,9 +4717,16 @@ Speed.prototype.getListToItems = function (listName, caml, controls, tableonly, 
                             objProp.value = SpeedContext.checkNull(listEnumerator.get_current().get_item(controlsToUse[i]).get_lookupValue());
                             if (SPFieldType.toLowerCase() === "sp.fielduservalue" || (nopropinJSEngine && SPFieldType.toLowerCase() === "object")) {
                                 try {
-                                    objProp.email = SpeedContext.checkNull(listEnumerator.get_current().get_item(controlsToUse[i]).get_email());
+                                    objProp.email = listEnumerator.get_current().get_item(controlsToUse[i]).get_email();
                                 } catch (e) {
                                     objProp.email = "";
+                                }
+
+                                if (objProp.email == null && $.inArray(objProp.id, SpeedContext.usersInEnvironmentByIdArary) < 0) {
+                                    var userCtx = context.get_web().get_siteUsers().getById(objProp.id);
+                                    SpeedContext.usersInEnvironmentByIdArary.push(objProp.id);
+                                    emailChecker.push(userCtx);
+                                    peopleColumns.push(controlsToUse[i]);
                                 }
                             }
 
@@ -4518,6 +4739,7 @@ Speed.prototype.getListToItems = function (listName, caml, controls, tableonly, 
                         } else if (SPFieldType.toLowerCase() === "array") {
                             var multiUser = listEnumerator.get_current().get_item(controlsToUse[i]);
                             var arrayToSave = [];
+                            var isUserColumn = false;
                             for (var j = 0; j <= multiUser.length - 1; j++) {
                                 var objectOfUsers = {};
                                 objectOfUsers.id = multiUser[j].get_lookupId();
@@ -4527,6 +4749,13 @@ Speed.prototype.getListToItems = function (listName, caml, controls, tableonly, 
                                 } catch (e) {
                                     objectOfUsers.email = "";
                                 }
+
+                                if (objectOfUsers.email === null && $.inArray(objectOfUsers.id, SpeedContext.usersInEnvironmentByIdArary) < 0) {
+                                    isUserColumn = true;
+                                    var userCtx = context.get_web().get_siteUsers().getById(objectOfUsers.id);
+                                    SpeedContext.usersInEnvironmentByIdArary.push(objectOfUsers.id);
+                                    emailChecker.push(userCtx);
+                                }
                                 arrayToSave.push(objectOfUsers);
                             }
 
@@ -4534,6 +4763,10 @@ Speed.prototype.getListToItems = function (listName, caml, controls, tableonly, 
                                 if (typeof conditions[controlsToUse[i]] !== "undefined") {
                                     arrayToSave = conditions[controlsToUse[i]](arrayToSave);
                                 }
+                            }
+
+                            if (isUserColumn) {
+                                peopleColumns.push(controlsToUse[i]);
                             }
                             objectToReturn[controlsToUse[i]] = arrayToSave;
                         } else if (SPFieldType.toLowerCase() === "sp.fieldurlvalue") {
@@ -4548,7 +4781,7 @@ Speed.prototype.getListToItems = function (listName, caml, controls, tableonly, 
                             try {
                                 listEnumerator.get_current().get_item(controlsToUse[i]);
                             } catch (e) {
-                                throw `${controlsToUse[i]} doesnt exist in this list`;
+                                throw `${controlsToUse[i]} doesnt exist in this list (${listName})`;
                             }
                             var columnValue = SpeedContext.checkNull(listEnumerator.get_current().get_item(controlsToUse[i]));
                             if (typeof conditions === "object" && conditions !== null) {
@@ -4569,7 +4802,16 @@ Speed.prototype.getListToItems = function (listName, caml, controls, tableonly, 
                         listItems.push(objectToReturn);
                     }
                 }
-                onSuccess(listItems, itemProperties.ListName);
+
+                if (emailChecker.length === 0) {
+                    onSuccess(listItems, itemProperties.ListName);
+                }
+                else {
+                    getUserInformationArray(0, function () {
+                        onSuccess(listItems, itemProperties.ListName);
+                    });
+                }
+
             },
             onFailedCall,
             appContext
@@ -4590,6 +4832,49 @@ Speed.prototype.getListToItems = function (listName, caml, controls, tableonly, 
             SpeedContext.getItemsMaxThreshold(listName, caml, data, onSuccess, onFailed, appContext);
         }
     }
+
+    function getUserInformationArray(pos, callback) {
+        context.load(emailChecker[pos]);
+        context.executeQueryAsync(function () {
+            var email = emailChecker[pos].get_email();
+            var id = emailChecker[pos].get_id();
+            SpeedContext.usersInEnvironmentById[id] = email;
+            if (pos < (emailChecker.length - 1)) {
+                pos++;
+                getUserInformationArray(pos, callback);
+            }
+            else {
+                for (var x = 0; x < listItems.length; x++) {
+                    for (var y = 0; y < peopleColumns.length; y++) {
+                        if (Array.isArray(listItems[x][peopleColumns[y]])) {
+                            var userdetail = listItems[x][peopleColumns[y]];
+                            for (var z = 0; z < userdetail.length; z++) {
+                                if (typeof SpeedContext.usersInEnvironmentById[userdetail[z].id] !== "undefined") {
+                                    listItems[x][peopleColumns[y]][z].email = SpeedContext.usersInEnvironmentById[userdetail[z]];
+                                }
+                            }
+                        }
+                        else {
+                            if (typeof SpeedContext.usersInEnvironmentById[listItems[x][peopleColumns[y]].id] !== "undefined") {
+                                listItems[x][peopleColumns[y]].email = SpeedContext.usersInEnvironmentById[listItems[x][peopleColumns[y]].id];
+                            }
+                        }
+                    }
+                }
+
+                callback();
+            }
+        },
+            function (sender, args) {
+                SpeedContext.checkConnectionLatency();
+                onFailedCall(sender, args, {
+                    name: "getListToItem(Email Checker)",
+                    context: SpeedContext,
+                    err_description: "",
+                    resource: listName
+                });
+            });
+    }
 };
 
 /*
@@ -4597,6 +4882,10 @@ Used to retreive data from list that has passed the threshold capacity
 */
 Speed.prototype.getItemsMaxThreshold = function (listName, caml, listSearchData, onSuccess, onFailed, appContext) {
     var SpeedContext = this;
+    var emailChecker = [];
+    var peopleColumns = [];
+    var context = SpeedContext.initiate();
+    var listItems = [];
     var numberOfIterations = Math.ceil(listSearchData.lastItemID / listSearchData.threshold);
     var conditions = listSearchData.conditions;
     SpeedContext.thresholdListSettings[listName] = {
@@ -4632,7 +4921,7 @@ Speed.prototype.getItemsMaxThreshold = function (listName, caml, listSearchData,
             listName,
             SpeedContext.camlBuilder(camlModified),
             function (itemProperties) {
-                var listItems = [];
+
                 var listEnumerator = itemProperties.getEnumerator();
                 while (listEnumerator.moveNext()) {
                     var objectToReturn = {};
@@ -4659,6 +4948,13 @@ Speed.prototype.getItemsMaxThreshold = function (listName, caml, listSearchData,
                                 } catch (e) {
                                     objProp.email = "";
                                 }
+
+                                if (objProp.email == null && $.inArray(objProp.id, SpeedContext.usersInEnvironmentByIdArary) < 0) {
+                                    var userCtx = context.get_web().get_siteUsers().getById(objProp.id);
+                                    SpeedContext.usersInEnvironmentByIdArary.push(objProp.id);
+                                    emailChecker.push(userCtx);
+                                    peopleColumns.push(controlsToUse[i]);
+                                }
                             }
 
                             if (typeof conditions === "object" && conditions !== null) {
@@ -4670,6 +4966,7 @@ Speed.prototype.getItemsMaxThreshold = function (listName, caml, listSearchData,
                         } else if (SPFieldType.toLowerCase() === "array") {
                             var multiUser = listEnumerator.get_current().get_item(controlsToUse[i]);
                             var arrayToSave = [];
+                            var isUserColumn = false;
                             for (var j = 0; j <= multiUser.length - 1; j++) {
                                 var objectOfUsers = {};
                                 objectOfUsers.id = multiUser[j].get_lookupId();
@@ -4679,6 +4976,13 @@ Speed.prototype.getItemsMaxThreshold = function (listName, caml, listSearchData,
                                 } catch (e) {
                                     objectOfUsers.email = "";
                                 }
+
+                                if (objectOfUsers.email === null && $.inArray(objectOfUsers.id, SpeedContext.usersInEnvironmentByIdArary) < 0) {
+                                    isUserColumn = true;
+                                    var userCtx = context.get_web().get_siteUsers().getById(objectOfUsers.id);
+                                    SpeedContext.usersInEnvironmentByIdArary.push(objectOfUsers.id);
+                                    emailChecker.push(userCtx);
+                                }
                                 arrayToSave.push(objectOfUsers);
                             }
 
@@ -4687,12 +4991,16 @@ Speed.prototype.getItemsMaxThreshold = function (listName, caml, listSearchData,
                                     arrayToSave = conditions[controlsToUse[i]](arrayToSave);
                                 }
                             }
+
+                            if (isUserColumn) {
+                                peopleColumns.push(controlsToUse[i]);
+                            }
                             objectToReturn[controlsToUse[i]] = arrayToSave;
                         } else {
                             try {
                                 listEnumerator.get_current().get_item(controlsToUse[i]);
                             } catch (e) {
-                                throw `${controlsToUse[i]} doesnt exist in this list`;
+                                throw `${controlsToUse[i]} doesnt exist in this list (${listName})`;
                             }
                             var columnValue = SpeedContext.checkNull(listEnumerator.get_current().get_item(controlsToUse[i]));
                             if (typeof conditions === "object" && conditions !== null) {
@@ -4736,7 +5044,15 @@ Speed.prototype.getItemsMaxThreshold = function (listName, caml, listSearchData,
             } else {
                 itemsToSend.sort((a, b) => (a[SpeedContext.thresholdListSettings[list].orderby] < b[SpeedContext.thresholdListSettings[list].orderby] ? 1 : -1));
             }
-            callback(itemsToSend);
+
+            if (emailChecker.length === 0) {
+                callback(itemsToSend);
+            }
+            else {
+                getUserInformationArray(0, function () {
+                    callback(itemsToSend);
+                });
+            }
         } else if (SpeedContext.thresholdListSettings[listName].feedback !== null) {
             //feedback to the user
             var itemsToSend = getUniqueListBy(SpeedContext.thresholdListSettings[list].items, "ID");
@@ -4751,6 +5067,49 @@ Speed.prototype.getItemsMaxThreshold = function (listName, caml, listSearchData,
 
     function getUniqueListBy(arr, key) {
         return [...new Map(arr.map((item) => [item[key], item])).values()];
+    }
+
+    function getUserInformationArray(pos, callback) {
+        context.load(emailChecker[pos]);
+        context.executeQueryAsync(function () {
+            var email = emailChecker[pos].get_email();
+            var id = emailChecker[pos].get_id();
+            SpeedContext.usersInEnvironmentById[id] = email;
+            if (pos < (emailChecker.length - 1)) {
+                pos++;
+                getUserInformationArray(pos, callback);
+            }
+            else {
+                for (var x = 0; x < listItems.length; x++) {
+                    for (var y = 0; y < peopleColumns.length; y++) {
+                        if (Array.isArray(listItems[x][peopleColumns[y]])) {
+                            var userdetail = listItems[x][peopleColumns[y]];
+                            for (var z = 0; z < userdetail.length; z++) {
+                                if (typeof SpeedContext.usersInEnvironmentById[userdetail[z].id] !== "undefined") {
+                                    listItems[x][peopleColumns[y]][z].email = SpeedContext.usersInEnvironmentById[userdetail[z]];
+                                }
+                            }
+                        }
+                        else {
+                            if (typeof SpeedContext.usersInEnvironmentById[listItems[x][peopleColumns[y]].id] !== "undefined") {
+                                listItems[x][peopleColumns[y]].email = SpeedContext.usersInEnvironmentById[listItems[x][peopleColumns[y]].id];
+                            }
+                        }
+                    }
+                }
+
+                callback();
+            }
+        },
+            function (sender, args) {
+                speedContext.checkConnectionLatency();
+                onFailedCall(sender, args, {
+                    name: "getListToItems(Email Checker)",
+                    context: speedContext,
+                    err_description: "",
+                    resource: listName
+                });
+            });
     }
 };
 
@@ -5657,6 +6016,7 @@ Speed.prototype.initializePeoplePicker = function (peoplePickerElementId, proper
         multipleValues = (typeof properties.multipleValues === 'undefined') ? false : properties.multipleValues;
         maxSuggestions = (typeof properties.maxSuggestions === 'undefined') ? 50 : properties.maxSuggestions;
         groupId = (typeof properties.spGroupId === 'undefined') ? "" : properties.spGroupId;
+        princpalAccount = (typeof properties.princpalAccount === 'undefined') ? princpalAccount : properties.princpalAccount;
     }
     var schema = {};
     schema['PrincipalAccountType'] = princpalAccount;
@@ -6886,6 +7246,10 @@ Speed.prototype.convertArrayBufferToBinary = function (data, isUint8) {
  */
 Speed.prototype.getDocumentsInFolder = function (libraryInformation, albumLink, caml, onSuccess, onFailed, appContext) {
     var speedContext = this;
+    var context = speedContext.initiate();
+    var emailChecker = [];
+    var peopleColumns = [];
+    var items = [];
     var onFailedCall = typeof onFailed === "undefined" || onFailed == null ? this.errorHandler : onFailed;
     libraryInformation = typeof libraryInformation == "string" ? { listName: libraryInformation } : libraryInformation;
     libraryInformation.columns = typeof libraryInformation.columns == "undefined" ? [] : libraryInformation.columns;
@@ -6928,7 +7292,7 @@ Speed.prototype.getDocumentsInFolder = function (libraryInformation, albumLink, 
             { rowlimit: 1, orderby: "ID", ascending: "FALSE", viewScope: "RecursiveAll" },
             { operator: "Eq", field: "FSObjType", type: "Number", val: "0" }
         ];
-        speedContext.getItem(libraryInformation.listName, speedContext.camlBuilder(lastItemQuery), function (itemProperties,listname) {
+        speedContext.getItem(libraryInformation.listName, speedContext.camlBuilder(lastItemQuery), function (itemProperties, listname) {
             var listEnumerator = itemProperties.getEnumerator();
             while (listEnumerator.moveNext()) {
                 speedContext.libraryDictionary[listname].lastItemID = listEnumerator.get_current().get_item("ID");
@@ -6963,6 +7327,9 @@ Speed.prototype.getDocumentsInFolder = function (libraryInformation, albumLink, 
                 camlModified = speedContext.deferenceObject(caml);
                 camlModified = speedContext.camlBuilder(camlModified);
             }
+            else {
+                camlModified = caml;
+            }
             camlQuery = new SP.CamlQuery();
             camlQuery.set_viewXml(camlModified);
         }
@@ -6981,7 +7348,6 @@ Speed.prototype.getDocumentsInFolder = function (libraryInformation, albumLink, 
         context.executeQueryAsync(
             function () {
                 setTimeout(function () {
-                    var items = [];
                     var ListEnumerator = window.speedGlobal[total].getEnumerator();
                     while (ListEnumerator.moveNext()) {
                         var documentItem = {};
@@ -6993,6 +7359,7 @@ Speed.prototype.getDocumentsInFolder = function (libraryInformation, albumLink, 
                             var File = currentItem.get_file();
                             if (File != null) {
                                 documentItem.FileUrl = File.get_serverRelativeUrl();
+                                documentItem.FileSize = File.get_length();
                             }
                         }
                         documentItem.ID = currentItem.get_item("ID");
@@ -7016,13 +7383,20 @@ Speed.prototype.getDocumentsInFolder = function (libraryInformation, albumLink, 
                                 (nopropinJSEngine && SPFieldType.toLowerCase() === "object")
                             ) {
                                 var objProp = {};
-                                objProp.id = SpeedContext.checkNull(ListEnumerator.get_current().get_item(libraryInformation.columns[i]).get_lookupId());
-                                objProp.value = SpeedContext.checkNull(ListEnumerator.get_current().get_item(libraryInformation.columns[i]).get_lookupValue());
+                                objProp.id = speedContext.checkNull(ListEnumerator.get_current().get_item(libraryInformation.columns[i]).get_lookupId());
+                                objProp.value = speedContext.checkNull(ListEnumerator.get_current().get_item(libraryInformation.columns[i]).get_lookupValue());
                                 if (SPFieldType.toLowerCase() === "sp.fielduservalue" || (nopropinJSEngine && SPFieldType.toLowerCase() === "object")) {
                                     try {
-                                        objProp.email = SpeedContext.checkNull(ListEnumerator.get_current().get_item(libraryInformation.columns[i]).get_email());
+                                        objProp.email = ListEnumerator.get_current().get_item(libraryInformation.columns[i]).get_email();
                                     } catch (e) {
                                         objProp.email = "";
+                                    }
+
+                                    if (objProp.email == null && $.inArray(objProp.id, speedContext.usersInEnvironmentByIdArary) < 0) {
+                                        var userCtx = context.get_web().get_siteUsers().getById(objProp.id);
+                                        speedContext.usersInEnvironmentByIdArary.push(objProp.id);
+                                        emailChecker.push(userCtx);
+                                        peopleColumns.push(libraryInformation.columns[i]);
                                     }
                                 }
 
@@ -7035,6 +7409,7 @@ Speed.prototype.getDocumentsInFolder = function (libraryInformation, albumLink, 
                             } else if (SPFieldType.toLowerCase() === "array") {
                                 var multiUser = ListEnumerator.get_current().get_item(libraryInformation.columns[i]);
                                 var arrayToSave = [];
+                                var isUserColumn = false;
                                 for (var j = 0; j <= multiUser.length - 1; j++) {
                                     var objectOfUsers = {};
                                     objectOfUsers.id = multiUser[j].get_lookupId();
@@ -7044,6 +7419,13 @@ Speed.prototype.getDocumentsInFolder = function (libraryInformation, albumLink, 
                                     } catch (e) {
                                         objectOfUsers.email = "";
                                     }
+
+                                    if (objectOfUsers.email === null && $.inArray(objectOfUsers.id, speedContext.usersInEnvironmentByIdArary) < 0) {
+                                        isUserColumn = true;
+                                        var userCtx = context.get_web().get_siteUsers().getById(objectOfUsers.id);
+                                        speedContext.usersInEnvironmentByIdArary.push(objectOfUsers.id);
+                                        emailChecker.push(userCtx);
+                                    }
                                     arrayToSave.push(objectOfUsers);
                                 }
 
@@ -7052,12 +7434,16 @@ Speed.prototype.getDocumentsInFolder = function (libraryInformation, albumLink, 
                                         arrayToSave = conditions[libraryInformation.columns[i]](arrayToSave);
                                     }
                                 }
+
+                                if (isUserColumn) {
+                                    peopleColumns.push(libraryInformation.columns[i]);
+                                }
                                 documentItem[libraryInformation.columns[i]] = arrayToSave;
                             } else {
                                 try {
                                     ListEnumerator.get_current().get_item(libraryInformation.columns[i]);
                                 } catch (e) {
-                                    throw `${libraryInformation.columns[i]} doesnt exist in this list`;
+                                    throw `${libraryInformation.columns[i]} doesnt exist in this list (${libraryInformation.listName})`;
                                 }
                                 var columnValue = speedContext.checkNull(ListEnumerator.get_current().get_item(libraryInformation.columns[i]));
                                 if (typeof conditions === "object" && conditions !== null) {
@@ -7078,7 +7464,16 @@ Speed.prototype.getDocumentsInFolder = function (libraryInformation, albumLink, 
                             items.push(documentItem);
                         }
                     }
-                    onSuccess(items);
+
+                    if (emailChecker.length === 0) {
+                        onSuccess(items);
+                    }
+                    else {
+                        getUserInformationArray(0, function () {
+                            onSuccess(items);
+                        });
+                    }
+
                 }, 1000);
             },
             function (sender, args) {
@@ -7091,10 +7486,56 @@ Speed.prototype.getDocumentsInFolder = function (libraryInformation, albumLink, 
             }
         );
     }
+
+    function getUserInformationArray(pos, callback) {
+        context.load(emailChecker[pos]);
+        context.executeQueryAsync(function () {
+            var email = emailChecker[pos].get_email();
+            var id = emailChecker[pos].get_id();
+            speedContext.usersInEnvironmentById[id] = email;
+            if (pos < (emailChecker.length - 1)) {
+                pos++;
+                getUserInformationArray(pos, callback);
+            }
+            else {
+                for (var x = 0; x < listItems.length; x++) {
+                    for (var y = 0; y < peopleColumns.length; y++) {
+                        if (Array.isArray(listItems[x][peopleColumns[y]])) {
+                            var userdetail = listItems[x][peopleColumns[y]];
+                            for (var z = 0; z < userdetail.length; z++) {
+                                if (typeof speedContext.usersInEnvironmentById[userdetail[z].id] !== "undefined") {
+                                    listItems[x][peopleColumns[y]][z].email = speedContext.usersInEnvironmentById[userdetail[z]];
+                                }
+                            }
+                        }
+                        else {
+                            if (typeof speedContext.usersInEnvironmentById[listItems[x][peopleColumns[y]].id] !== "undefined") {
+                                listItems[x][peopleColumns[y]].email = speedContext.usersInEnvironmentById[listItems[x][peopleColumns[y]].id];
+                            }
+                        }
+                    }
+                }
+
+                callback();
+            }
+        },
+            function (sender, args) {
+                SpeedContext.checkConnectionLatency();
+                onFailedCall(sender, args, {
+                    name: "getListToItem(Email Checker)",
+                    context: SpeedContext,
+                    err_description: "",
+                    resource: listName
+                });
+            });
+    }
 };
 
 Speed.prototype.getItemsInLibraryMaxThreshold = function (listName, caml, listSearchData, onSuccess, onFailed, appContext) {
     var SpeedContext = this;
+    var emailChecker = [];
+    var peopleColumns = [];
+    var context = SpeedContext.initiate();
     var numberOfIterations = Math.ceil(listSearchData.lastItemID / listSearchData.threshold);
     var conditions = listSearchData.conditions;
     var albumLink = listSearchData.albumLink;
@@ -7110,9 +7551,9 @@ Speed.prototype.getItemsInLibraryMaxThreshold = function (listName, caml, listSe
     var columns = listSearchData.columns;
     var mergeColumns = listSearchData.mergeColumns;
 
-    makeLibraryCalls(1, numberOfIterations,listName);
+    makeLibraryCalls(1, numberOfIterations, listName);
 
-    function makeLibraryCalls(pos, iterations,listname) {
+    function makeLibraryCalls(pos, iterations, listname) {
         var idVal = pos == 1 ? listSearchData.lastItemID : listSearchData.lastItemID - listSearchData.threshold * (pos - 1);
         var item = {
             operator: "Leq",
@@ -7158,6 +7599,7 @@ Speed.prototype.getItemsInLibraryMaxThreshold = function (listName, caml, listSe
                             if (File != null) {
                                 documentItem.FileName = currentItem.get_item("FileLeafRef");
                                 documentItem.FileUrl = File.get_serverRelativeUrl();
+                                documentItem.FileSize = File.get_length();
                             }
                         }
                         documentItem.ID = currentItem.get_item("ID");
@@ -7186,9 +7628,16 @@ Speed.prototype.getItemsInLibraryMaxThreshold = function (listName, caml, listSe
                                 objProp.value = SpeedContext.checkNull(ListEnumerator.get_current().get_item(columns[i]).get_lookupValue());
                                 if (SPFieldType.toLowerCase() === "sp.fielduservalue" || (nopropinJSEngine && SPFieldType.toLowerCase() === "object")) {
                                     try {
-                                        objProp.email = SpeedContext.checkNull(ListEnumerator.get_current().get_item(columns[i]).get_email());
+                                        objProp.email = ListEnumerator.get_current().get_item(columns[i]).get_email();
                                     } catch (e) {
                                         objProp.email = "";
+                                    }
+
+                                    if (objProp.email == null && $.inArray(objProp.id, SpeedContext.usersInEnvironmentByIdArary) < 0) {
+                                        var userCtx = context.get_web().get_siteUsers().getById(objProp.id);
+                                        SpeedContext.usersInEnvironmentByIdArary.push(objProp.id);
+                                        emailChecker.push(userCtx);
+                                        peopleColumns.push(columns[i]);
                                     }
                                 }
 
@@ -7201,6 +7650,7 @@ Speed.prototype.getItemsInLibraryMaxThreshold = function (listName, caml, listSe
                             } else if (SPFieldType.toLowerCase() === "array") {
                                 var multiUser = ListEnumerator.get_current().get_item(columns[i]);
                                 var arrayToSave = [];
+                                var isUserColumn = false;
                                 for (var j = 0; j <= multiUser.length - 1; j++) {
                                     var objectOfUsers = {};
                                     objectOfUsers.id = multiUser[j].get_lookupId();
@@ -7210,6 +7660,13 @@ Speed.prototype.getItemsInLibraryMaxThreshold = function (listName, caml, listSe
                                     } catch (e) {
                                         objectOfUsers.email = "";
                                     }
+
+                                    if (objectOfUsers.email === null && $.inArray(objectOfUsers.id, SpeedContext.usersInEnvironmentByIdArary) < 0) {
+                                        isUserColumn = true;
+                                        var userCtx = context.get_web().get_siteUsers().getById(objectOfUsers.id);
+                                        SpeedContext.usersInEnvironmentByIdArary.push(objectOfUsers.id);
+                                        emailChecker.push(userCtx);
+                                    }
                                     arrayToSave.push(objectOfUsers);
                                 }
 
@@ -7218,12 +7675,16 @@ Speed.prototype.getItemsInLibraryMaxThreshold = function (listName, caml, listSe
                                         arrayToSave = conditions[columns[i]](arrayToSave);
                                     }
                                 }
+
+                                if (isUserColumn) {
+                                    peopleColumns.push(columns[i]);
+                                }
                                 documentItem[columns[i]] = arrayToSave;
                             } else {
                                 try {
                                     ListEnumerator.get_current().get_item(columns[i]);
                                 } catch (e) {
-                                    throw `${columns[i]} doesnt exist in this list`;
+                                    throw `${columns[i]} doesnt exist in this list (${listName})`;
                                 }
                                 var columnValue = SpeedContext.checkNull(ListEnumerator.get_current().get_item(columns[i]));
                                 if (typeof conditions === "object" && conditions !== null) {
@@ -7246,7 +7707,7 @@ Speed.prototype.getItemsInLibraryMaxThreshold = function (listName, caml, listSe
                     }
                     if (pos <= iterations) {
                         pos++;
-                        makeLibraryCalls(pos, iterations,listname);
+                        makeLibraryCalls(pos, iterations, listname);
                     }
                     checkThresholdCount(listName, items, onSuccess);
                 }, 1000);
@@ -7272,7 +7733,15 @@ Speed.prototype.getItemsInLibraryMaxThreshold = function (listName, caml, listSe
             } else {
                 itemsToSend.sort((a, b) => (a[SpeedContext.thresholdListSettings[list].orderby] < b[SpeedContext.thresholdListSettings[list].orderby] ? 1 : -1));
             }
-            callback(itemsToSend);
+
+            if (emailChecker.length === 0) {
+                callback(itemsToSend);
+            }
+            else {
+                getUserInformationArray(0, function () {
+                    callback(itemsToSend);
+                });
+            }
         } else if (SpeedContext.thresholdListSettings[listName].feedback !== null) {
             //feedback to the user
             var itemsToSend = getUniqueListBy(SpeedContext.thresholdListSettings[list].items, "ID");
@@ -7287,6 +7756,49 @@ Speed.prototype.getItemsInLibraryMaxThreshold = function (listName, caml, listSe
 
     function getUniqueListBy(arr, key) {
         return [...new Map(arr.map((item) => [item[key], item])).values()];
+    }
+
+    function getUserInformationArray(pos, callback) {
+        context.load(emailChecker[pos]);
+        context.executeQueryAsync(function () {
+            var email = emailChecker[pos].get_email();
+            var id = emailChecker[pos].get_id();
+            SpeedContext.usersInEnvironmentById[id] = email;
+            if (pos < (emailChecker.length - 1)) {
+                pos++;
+                getUserInformationArray(pos, callback);
+            }
+            else {
+                for (var x = 0; x < listItems.length; x++) {
+                    for (var y = 0; y < peopleColumns.length; y++) {
+                        if (Array.isArray(listItems[x][peopleColumns[y]])) {
+                            var userdetail = listItems[x][peopleColumns[y]];
+                            for (var z = 0; z < userdetail.length; z++) {
+                                if (typeof SpeedContext.usersInEnvironmentById[userdetail[z].id] !== "undefined") {
+                                    listItems[x][peopleColumns[y]][z].email = SpeedContext.usersInEnvironmentById[userdetail[z]];
+                                }
+                            }
+                        }
+                        else {
+                            if (typeof SpeedContext.usersInEnvironmentById[listItems[x][peopleColumns[y]].id] !== "undefined") {
+                                listItems[x][peopleColumns[y]].email = SpeedContext.usersInEnvironmentById[listItems[x][peopleColumns[y]].id];
+                            }
+                        }
+                    }
+                }
+
+                callback();
+            }
+        },
+            function (sender, args) {
+                speedContext.checkConnectionLatency();
+                onFailedCall(sender, args, {
+                    name: "getListToItems(Email Checker)",
+                    context: speedContext,
+                    err_description: "",
+                    resource: listName
+                });
+            });
     }
 };
 
@@ -7552,7 +8064,7 @@ Speed.prototype.createSubFolder = function (foldernames, libraryDetails, metadat
                                         name: "createSubFolder",
                                         context: speedContext,
                                         err_description: "failed to create roles for folder created",
-                                        resource: foldername
+                                        resource: folder
                                     });
                                 });
                             }
@@ -7623,7 +8135,7 @@ Speed.prototype.createSubFolder = function (foldernames, libraryDetails, metadat
                                     name: "createSubFolder",
                                     context: speedContext,
                                     err_description: "failed to create roles for folder created",
-                                    resource: foldername
+                                    resource: folder
                                 });
                             });
                         }
@@ -8723,6 +9235,7 @@ Speed.prototype.logWriter = function (logName, logContent, library, logLimit, ca
             itemDetails.size = listEnumerator.get_current().get_item('File_x0020_Size');
         }
         var libraryUrl = speedlog.get_context().get_url();
+        libraryUrl = (libraryUrl.endsWith("/")) ? libraryUrl.slice(0, -1) : libraryUrl;
         libraryUrl += "/" + library;
         if (logsCount == 0 || itemDetails.size > logLimit) {
             //this logs of file if no log text file is present or if the log is greater than limit passed

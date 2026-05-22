@@ -3,6 +3,7 @@
   "id": "b660e3ec-597f-44b5-9344-f4bb41963ef5",
   "alias": "RsNoconformanceWebPart",
   "componentType": "WebPart",
+  "supportsFullBleed": true,
 
   // The "*" signifies that the version should be taken from the package.json
   "version": "*",

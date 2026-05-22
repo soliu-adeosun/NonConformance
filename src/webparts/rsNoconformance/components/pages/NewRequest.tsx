@@ -201,7 +201,7 @@ export default class NewRequest extends React.Component<{}, {}> {
                 </div>
 
                 <div className="action-btns flex justify-center items-center gap-3" style={{ marginTop: "2rem" }}>
-                    <ClientButton text={"Submit"} func={"MainApplication.NewRequestComponent.confirmSubmit"} clax={"px-4 py-2 bg-slate-500 text-white text-sm font-medium hover:bg-slate-600 transition-colors"} prop="NewRequest" attr="" />
+                    <ClientButton text={"Submit"} func={"NewRequestComponent.confirmSubmit"} clax={"px-4 py-2 bg-slate-500 text-white text-sm font-medium hover:bg-slate-600 transition-colors"} prop="NewRequest" attr="" />
                     {/* <button id="saveButton" className="px-4 py-2 bg-slate-500 text-white text-sm font-medium hover:bg-slate-600 transition-colors">
                             Save
                         </button> */}

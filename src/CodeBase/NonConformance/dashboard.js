@@ -91,13 +91,6 @@ whenDashboardDependeciesLoaded = function () {
                             <path fill-rule="evenodd" d="M3 6a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H3Zm1.75 2.5a.75.75 0 0 0 0 1.5h3.5a.75.75 0 0 0 0-1.5h-3.5ZM4 11.75a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 0 1.5h-3.5a.75.75 0 0 1-.75-.75Z" clip-rule="evenodd" />
                         </svg>
                     </a>` : ''}
-                    <a title="View" href="#/viewrequest?itemId=${valueToEva.WorkflowRequestID}" 
-                        class="p-1 sm:p-2 text-slate-400 hover:text-green-600 hover:bg-green-50 transition-colors">
-                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
-                            <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" />
-                            <path fill-rule="evenodd" d="M1.38 8.28a.87.87 0 0 1 0-.566 7.003 7.003 0 0 1 13.238.006.87.87 0 0 1 0 .566A7.003 7.003 0 0 1 1.379 8.28ZM11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" clip-rule="evenodd" />
-                        </svg>
-                    </a>
                 </div>`;
 
             var editStr = `
@@ -293,9 +286,9 @@ MainApplication.DashboardComponent.pendingRequests = function () {
             "ID", "Title", "WorkflowRequestID", "Current_Approver", "Current_Approver_Code", "Approval_Status",
             "Created", "InitiatorEmailAddress", "InitiatorLogin", "Transaction_History", "ReturnForCorrection",
             "Modified", "PendingUserEmail", "PendingUserLogin", "Attachment_Folder", "AttachmentURL", "Author",
-            "NCReferenceID", "Title", "ISOClause", "ObjectiveEvidence", "NonConformanceStatement", "TypeOfAudit",
+            "NCReferenceID", "ISOClause", "ObjectiveEvidence", "NonConformanceStatement", "TypeOfAudit",
             "Process", "Procedure", "RequestDate", "ExpectedDate", "CorrectiveActionName", "ActualDateOfResponse",
-            "RootCause", "Correction", "CorrectiveAction", "HOD", "Employee", "Year", "Requirement", "Comment"
+            "RootCause", "Correction", "CorrectiveAction", "HOD", "Employee", "Year", "Requirement", "Comment", "EmployeeEmail"
         ]
     };
 
@@ -315,9 +308,9 @@ MainApplication.DashboardComponent.myRequests = function () {
         viewScope: "RecursiveAll"
     }, {
         operator: 'Eq',
-        field: 'Title',
+        field: 'EmployeeEmail',
         type: 'Text',
-        val: CurrentUserProperties.title
+        val: CurrentUserProperties.email
     }];
 
     var query = ncRoot.camlBuilder(queryToUse);
@@ -327,7 +320,9 @@ MainApplication.DashboardComponent.myRequests = function () {
             "ID", "Title", "WorkflowRequestID", "Current_Approver", "Current_Approver_Code", "Approval_Status",
             "Created", "InitiatorEmailAddress", "InitiatorLogin", "Transaction_History", "ReturnForCorrection",
             "Modified", "PendingUserEmail", "PendingUserLogin", "Attachment_Folder", "AttachmentURL", "Author",
-            "NCReferenceID", "Title", "ISOClause", "ObjectiveEvidence", "NonConformanceStatement"
+            "NCReferenceID", "ISOClause", "ObjectiveEvidence", "NonConformanceStatement", "TypeOfAudit",
+            "Process", "Procedure", "RequestDate", "ExpectedDate", "CorrectiveActionName", "ActualDateOfResponse",
+            "RootCause", "Correction", "CorrectiveAction", "HOD", "Employee", "Year", "Requirement", "Comment", "EmployeeEmail"
         ]
     };
 

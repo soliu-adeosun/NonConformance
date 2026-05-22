@@ -264,7 +264,7 @@ export default class ViewRequest extends React.Component<{}, {}> {
                 <div className="action-btns flex justify-center items-center gap-3" style={{ marginTop: "2rem" }}>
                     {/* <ClientButton
                         text={"Submit"}
-                        func={"MainApplication.ApproveRequestComponent.confirmSubmit"}
+                        func={"ApproveRequestComponent.confirmSubmit"}
                         clax={"px-4 py-2 bg-slate-700 text-white text-sm font-medium hover:bg-slate-800 transition-colors"}
                         prop=""
                         attr=""
