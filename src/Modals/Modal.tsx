@@ -138,8 +138,8 @@ export default class Modal extends React.Component<{}, {}> {
                             <div className="modal-header">
                             </div>
                             <div className="modal-body">
-                                <img className="animated-image" src={require("../Assets/img/rslogo_colored.png")} style={{ display: "block", margin: "0 auto" }} />
-                                <p id="loadertext" style={{ textAlign : "center"}}></p>
+                                {/* <img className="animated-image" src={require("../Assets/img/rslogo_colored.png")} style={{ display: "block", margin: "0 auto" }} /> */}
+                                <h3 id="loadertext" style={{ textAlign : "center", color: 'white' }}>Loading...</h3>
                             </div>
                             <div className="modal-footer">
 

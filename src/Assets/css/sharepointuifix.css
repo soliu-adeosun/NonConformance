@@ -476,3 +476,9 @@ img.custom-picker-li-image {
 .p_cAiF2_1x34n, .p_YevXG_1x34n, .p_95C5W_1x34n {
   width: 100% !important;
 }
+
+div[data-automationid="AppChrome"] {
+  margin: 0 !important;
+  border-radius: 0 !important;
+  border: 0 !important;
+}

@@ -24,15 +24,15 @@ const GlobalSideNav: React.FC = () => {
                     <div className="p-6 border-b border-slate-600">
                         <div className="flex gap-3 items-center">
                             <img
-                                src={require("../Assets/img/rslogo_mono.png")}
-                                style={{ marginLeft: '-10px', maxWidth: '100%' }}
+                                src={require("../Assets/img/arridex.png")}
+                                style={{ marginLeft: '-10px', width: '40px' }}
                                 alt="logo"
                             />
-                            <h2 className="text-xl font-semibold text-white">
+                            <h2 className="text-xl font-semibold text-white hidden">
                                 Non-Conformance Revision:<span id="auditmanagementversion"></span>
                             </h2>
                         </div>
-                        <h2 className="text-lg font-semibold text-white">
+                        <h2 className="text-lg font-semibold text-white hidden">
                             Effective Date: <span id="versioneffectivedate"></span>
                         </h2>
                     </div>
