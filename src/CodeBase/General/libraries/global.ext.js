@@ -16,6 +16,8 @@ GlobalDefinitionsManager.prototype.extendStages = function () {
 
 
 GlobalDefinitionsManager.prototype.SetWorkflowRouting = function (customWorkflowEngine) {
+    // New flow: Author(AA0) -> Employee(AA1) -> Management(AA2) -> Employee(AA3) -> HOD(AA4) -> Management(AA5) -> CEO(AA6)
+    // Attachment field is hidden at AA1; becomes active from AA3 onwards.
     customWorkflowEngine.routingGroups = [
         //===============first level approver routes ===========
         {
@@ -55,6 +57,38 @@ GlobalDefinitionsManager.prototype.SetWorkflowRouting = function (customWorkflow
             code: "AA2",
             initiationCode: "AA1",
             possibleRoutes: [{
+                name: globalDefinitions.stageDefinitions.management,
+                username: "",
+                condition: true,
+                authenticationType: customWorkflowEngine.stages.group,
+                authenticationValue: null,
+                actionType: "Actor",
+                emails: [],
+                doa: false,
+                flow: globalDefinitions.stageDefinitions.normalflow,
+                users: []
+            }]
+        },
+        {
+            code: "AA3",
+            initiationCode: "AA2",
+            possibleRoutes: [{
+                name: globalDefinitions.stageDefinitions.employee,
+                username: "",
+                condition: true,
+                authenticationType: customWorkflowEngine.stages.user,
+                authenticationValue: null,
+                actionType: "Actor",
+                emails: [],
+                doa: false,
+                flow: globalDefinitions.stageDefinitions.normalflow,
+                users: []
+            }]
+        },
+        {
+            code: "AA4",
+            initiationCode: "AA3",
+            possibleRoutes: [{
                 name: globalDefinitions.stageDefinitions.hod,
                 username: "",
                 condition: true,
@@ -67,10 +101,9 @@ GlobalDefinitionsManager.prototype.SetWorkflowRouting = function (customWorkflow
                 users: []
             }]
         },
-
         {
-            code: "AA3",
-            initiationCode: "AA2",
+            code: "AA5",
+            initiationCode: "AA4",
             possibleRoutes: [{
                 name: globalDefinitions.stageDefinitions.management,
                 username: "",
@@ -85,8 +118,8 @@ GlobalDefinitionsManager.prototype.SetWorkflowRouting = function (customWorkflow
             }]
         },
         {
-            code: "AA4",
-            initiationCode: "AA3",
+            code: "AA6",
+            initiationCode: "AA5",
             possibleRoutes: [{
                 name: globalDefinitions.stageDefinitions.ceo,
                 username: "",
@@ -100,38 +133,6 @@ GlobalDefinitionsManager.prototype.SetWorkflowRouting = function (customWorkflow
                 users: []
             }]
         }
-        // {
-        //     code: "AA20",
-        //     initiationCode: "AA19",
-        //     possibleRoutes: [{
-        //         name: globalDefinitions.stageDefinitions.otherauditors,
-        //         username: "",
-        //         condition: true,
-        //         authenticationType: customWorkflowEngine.stages.user,
-        //         authenticationValue: null,
-        //         actionType: "Actor",
-        //         emails: [],
-        //         doa: false,
-        //         flow: globalDefinitions.stageDefinitions.normalflow,
-        //         users: []
-        //     }]
-        // },
-        // {
-        //     code: "AA21",
-        //     initiationCode: "AA20",
-        //     possibleRoutes: [{
-        //         name: globalDefinitions.stageDefinitions.auditees,
-        //         username: "",
-        //         condition: true,
-        //         authenticationType: customWorkflowEngine.stages.user,
-        //         authenticationValue: null,
-        //         actionType: "Actor",
-        //         emails: [],
-        //         doa: false,
-        //         flow: globalDefinitions.stageDefinitions.normalflow,
-        //         users: []
-        //     }]
-        // }
     ];
 }
 

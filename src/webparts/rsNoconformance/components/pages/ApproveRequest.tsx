@@ -205,7 +205,7 @@ export default class ApproveRequest extends React.Component<{}, {}> {
 
                 {/* Readoly Section Ends Here */}
 
-                <h2 style={{ marginTop: "2.2rem" }} className="text-xl sm:text-2xl font-bold text-navy-900 mb-4 sm:mb-6">Correction and Corrective Action Section</h2>
+                <h2 style={{ marginTop: "2.2rem" }} className="text-xl sm:text-2xl font-bold text-navy-900 mb-4 sm:mb-6">Root Cause and Corrective Action</h2>
                 <div id="approversReadOnlyContainer" className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
                     <div className="mt-2">
                         <label className="block text-sm font-medium text-blue-600 mb-2">Name</label>
@@ -255,7 +255,59 @@ export default class ApproveRequest extends React.Component<{}, {}> {
                             className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
                         ></textarea>
                     </div>
-                    <div className="mt-2">
+                    {/* The Five Why(s) - filled alongside CorrectionData */}
+                    <div className="mt-2 lg:col-span-2">
+                        <h3 className="text-lg font-semibold text-navy-900 mb-3">The Five Why(s)</h3>
+                        <div className="grid grid-cols-1 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-blue-600 mb-2">Why 1<span className="required">*</span></label>
+                                <textarea
+                                    speed-bind-class="CorrectionData"
+                                    speed-bind-validate="WhyOne"
+                                    placeholder="Enter Why 1..."
+                                    className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
+                                ></textarea>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-blue-600 mb-2">Why 2<span className="required">*</span></label>
+                                <textarea
+                                    speed-bind-class="CorrectionData"
+                                    speed-bind-validate="WhyTwo"
+                                    placeholder="Enter Why 2..."
+                                    className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
+                                ></textarea>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-blue-600 mb-2">Why 3<span className="required">*</span></label>
+                                <textarea
+                                    speed-bind-class="CorrectionData"
+                                    speed-bind-validate="WhyThree"
+                                    placeholder="Enter Why 3..."
+                                    className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
+                                ></textarea>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-blue-600 mb-2">Why 4<span className="required">*</span></label>
+                                <textarea
+                                    speed-bind-class="CorrectionData"
+                                    speed-bind-validate="WhyFour"
+                                    placeholder="Enter Why 4..."
+                                    className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
+                                ></textarea>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-blue-600 mb-2">Why 5<span className="required">*</span></label>
+                                <textarea
+                                    speed-bind-class="CorrectionData"
+                                    speed-bind-validate="WhyFive"
+                                    placeholder="Enter Why 5..."
+                                    className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
+                                ></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    {/* Attachment - hidden at AA1 (first employee stage), shown from AA3 onwards */}
+                    <div className="mt-2" id="attachmentFieldContainer">
                         <label className="block text-sm font-medium text-blue-600 mb-2">Attach File<span className="required">*</span></label>
                         <input
                             speed-file-validate="SupportingDocuments"
@@ -290,33 +342,14 @@ export default class ApproveRequest extends React.Component<{}, {}> {
                         attr=""
                     />
 
-                    <ClientButton text={"Decline"} func={"ApproveRequestComponent.confirmSubmit"} clax={"px-4 py-2 bg-slate-500 text-white text-sm font-medium hover:bg-slate-600 transition-colors hidden"} prop="Revise" attr="id='rtnBtn'" />
-                    {/* <button id="saveButton" className="px-4 py-2 bg-slate-500 text-white text-sm font-medium hover:bg-slate-600 transition-colors">
-                            Save
-                        </button> */}
+                    <ClientButton text={"Decline"} func={"ApproveRequestComponent.confirmSubmit"} clax={"px-4 py-2 bg-slate-500 text-white text-sm font-medium hover:bg-slate-600 transition-colors hidden decline-btn"} prop="Revise" attr="id='rtnBtn'" />
                     <Link to="/" className="px-4 py-2 bg-red-500 text-white text-sm font-medium hover:bg-red-600 transition-colors">
                         Cancel
                     </Link>
+                    {/* <button id="saveButton" className="px-4 py-2 bg-slate-500 text-white text-sm font-medium hover:bg-slate-600 transition-colors">
+                            Save
+                        </button> */}
                 </div>
-
-                <div className="row mt-3">
-                    <h3>Audit Trail</h3>
-                    <table className="w-full table-mobile">
-                        <thead className="border-b border-gray-200">
-                            <tr>
-                                <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-blue-600 uppercase tracking-wider" scope="col">Name</th>
-                                <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-blue-600 uppercase tracking-wider" scope="col">Stage</th>
-                                <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-blue-600 uppercase tracking-wider" scope="col">Action</th>
-                                <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-blue-600 uppercase tracking-wider" scope="col">Comment</th>
-                                <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-blue-600 uppercase tracking-wider" scope="col">Action Time</th>
-                            </tr>
-                        </thead>
-                        <tbody id="logs">
-
-                        </tbody>
-                    </table>
-                </div>
-
             </section>
         );
     }

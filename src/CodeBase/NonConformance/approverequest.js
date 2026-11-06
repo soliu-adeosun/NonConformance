@@ -154,7 +154,8 @@ MainApplication.ApproveRequestComponent.recoverListData = function() {
             "Modified", "PendingUserEmail", "PendingUserLogin", "Attachment_Folder", "AttachmentURL", "Author",
             "NCReferenceID", "ISOClause", "ObjectiveEvidence", "NonConformanceStatement", "TypeOfAudit",
             "Process", "Procedure", "RequestDate", "ExpectedDate", "CorrectiveActionName", "ActualDateOfResponse",
-            "RootCause", "Correction", "CorrectiveAction", "HOD", "Employee", "Year", "Requirement", "Comment", "EmployeeEmail", "HODEmail"
+            "RootCause", "Correction", "CorrectiveAction", "HOD", "Employee", "Year", "Requirement", "Comment", "EmployeeEmail", "HODEmail",
+            "WhyOne", "WhyTwo", "WhyThree", "WhyFour", "WhyFive"
         ];
 
         ncRoot.getListToControl(globalDefinitions.stageDefinitions.listname, query, extraProperties, function (listProperties) {
@@ -211,8 +212,12 @@ MainApplication.ApproveRequestComponent.recoverListData = function() {
                                 globalDefinitions.displayHistory(listProperties.Transaction_History);
                             }
 
-                            if(listProperties.Current_Approver !== "Employee" && listProperties.Current_Approver_Code !== "AA1"){
+                            // AA1 = first Employee stage (Five Whys + CorrectionData, Attachment HIDDEN)
+                            // AA3 = second Employee stage (Attachment ACTIVE)
+                            // All other stages use read-only form
+                            if (listProperties.Current_Approver !== "Employee" && listProperties.Current_Approver_Code !== "AA1" && listProperties.Current_Approver_Code !== "AA3") {
                                 MainApplication.ApproveRequestComponent.otherApproversReadOnlyForm();
+                                
                                 listProperties.Comment = "";
                             }
 
@@ -224,6 +229,9 @@ MainApplication.ApproveRequestComponent.recoverListData = function() {
                             // if (AppRequest.requestDetails.Current_Approver !== 'Employee'){
                             $spcontext.attachmentLinkBind(listProperties.AttachmentURL);
                             // }
+
+                            // Hide Attachment field at AA1 (first employee pass); show from AA3 onwards
+                            MainApplication.ApproveRequestComponent.toggleAttachmentField(listProperties.Current_Approver_Code);
                             
                             MainApplication.ApproveRequestComponent.dateHandler(listProperties.ActualDateOfResponse);
                             globalDefinitions.closeLoader();
@@ -294,13 +302,27 @@ MainApplication.ApproveRequestComponent.saveDataToList = function (actionTaken) 
         if (actionTaken === "Approved" || actionTaken === "Declined") {
             
             formData = customWorkflowEngine.routeEngine(customWorkflowEngine).runRouting(formData, AppRequest.requestDetails.Current_Approver_Code, actionTaken);
-            if (AppRequest.requestDetails.Current_Approver_Code === "AA1"){
+            // After AA3 (second Employee stage), next is HOD - set pending user to HOD
+            if (AppRequest.requestDetails.Current_Approver_Code === "AA3") {
                 formData.PendingUserLogin = AppRequest.requestDetails.HODEmail;
                 formData.PendingUserEmail = AppRequest.requestDetails.HODEmail;
             }
+            // After AA1 (first Employee stage), next is Management (group) - engine handles it
+            // After AA2 Management approves, next is Employee AA3 - set pending user back to Employee
+            if (AppRequest.requestDetails.Current_Approver_Code === "AA2") {
+                formData.PendingUserLogin = AppRequest.requestDetails.EmployeeEmail;
+                formData.PendingUserEmail = AppRequest.requestDetails.EmployeeEmail;
+            }
         } else if (actionTaken === "Revise") {
+            // Revise always returns to Employee to correct inputs.
+            // If still in first cycle (AA2), go back to AA1; otherwise go back to AA3 (attachment stage).
             formData.Current_Approver = globalDefinitions.stageDefinitions.employee;
-            formData.Current_Approver_Code = AppRequest.defaultStage;
+            var currentCode = AppRequest.requestDetails.Current_Approver_Code;
+            if (currentCode === "AA2" || currentCode === "AA1") {
+                formData.Current_Approver_Code = "AA1";
+            } else {
+                formData.Current_Approver_Code = "AA3";
+            }
             formData.PendingUserLogin = AppRequest.requestDetails.EmployeeEmail;
             formData.PendingUserEmail = AppRequest.requestDetails.EmployeeEmail;
             // formData.Approval_Status = "Revise";
@@ -447,7 +469,32 @@ MainApplication.ApproveRequestComponent.otherApproversReadOnlyForm = function ()
                             class="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
                         ></textarea>
                     </div>
-                    <div class="mt-2">
+                    <div class="mt-2 lg:col-span-2">
+                        <h3 class="text-lg font-semibold text-navy-900 mb-3">5 Why(s)</h3>
+                        <div class="grid grid-cols-1 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-blue-600 mb-2">Why 1</label>
+                                <textarea readOnly speed-bind="WhyOne" placeholder="Enter Why 1..." class="w-full px-3 sm:px-4 py-2 sm:py-3 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-blue-600 mb-2">Why 2</label>
+                                <textarea readOnly speed-bind="WhyTwo" placeholder="Enter Why 2..." class="w-full px-3 sm:px-4 py-2 sm:py-3 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-blue-600 mb-2">Why 3</label>
+                                <textarea readOnly speed-bind="WhyThree" placeholder="Enter Why 3..." class="w-full px-3 sm:px-4 py-2 sm:py-3 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-blue-600 mb-2">Why 4</label>
+                                <textarea readOnly speed-bind="WhyFour" placeholder="Enter Why 4..." class="w-full px-3 sm:px-4 py-2 sm:py-3 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-blue-600 mb-2">Why 5</label>
+                                <textarea readOnly speed-bind="WhyFive" placeholder="Enter Why 5..." class="w-full px-3 sm:px-4 py-2 sm:py-3 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-2" id="attachmentFieldContainerReadonly">
                         <label class="block text-sm font-medium text-blue-600 mb-2">Attach File</label>
                         <div speed-file-bind="SupportingDocuments"></div>
                     </div>
@@ -457,10 +504,35 @@ MainApplication.ApproveRequestComponent.otherApproversReadOnlyForm = function ()
     $("#approversReadOnlyContainer").empty();
     $("#approversReadOnlyContainer").append(otherApproversForm);
     $(".approver-btn").text("Approve");
-    $("#rtnBtn").show();
+    $(".decline-btn").removeClass("hidden");
     $("#commentBox").show();
     $("#approvercomment").removeAttr("readonly");
 
+}
+
+/**
+ * Toggle Attachment field visibility based on approval stage code.
+ * AA1 (first Employee): hide attachment
+ * AA3 and later: show attachment
+ */
+MainApplication.ApproveRequestComponent.toggleAttachmentField = function (approverCode) {
+    var $attachmentContainer = $("#attachmentFieldContainer");
+    if (!$attachmentContainer.length) {
+        return;
+    }
+    // Hide attachment only on first Employee stage (AA1)
+    if (approverCode === "AA1") {
+        $attachmentContainer.hide();
+        // Remove required validation on attachment while hidden
+        $attachmentContainer.find("input[speed-file-validate]").removeAttr("speed-file-validate");
+    } else {
+        $attachmentContainer.show();
+        // Ensure validation attribute is present when shown (AA3 and beyond for employee)
+        var $fileInput = $attachmentContainer.find("input[type='file']");
+        if ($fileInput.length && !$fileInput.attr("speed-file-validate")) {
+            $fileInput.attr("speed-file-validate", "SupportingDocuments");
+        }
+    }
 }
 
 MainApplication.ApproveRequestComponent.dateHandler = function (actualdate) {

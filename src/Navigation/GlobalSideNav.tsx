@@ -28,8 +28,8 @@ const GlobalSideNav: React.FC = () => {
                                 style={{ marginLeft: '-10px', width: '40px' }}
                                 alt="logo"
                             />
-                            <h2 className="text-xl font-semibold text-white hidden">
-                                Non-Conformance Revision:<span id="auditmanagementversion"></span>
+                            <h2 className="text-xl font-semibold text-white">
+                                Non-Conformance
                             </h2>
                         </div>
                         <h2 className="text-lg font-semibold text-white hidden">
