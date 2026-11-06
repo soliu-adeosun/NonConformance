@@ -197,6 +197,8 @@ MainApplication.NewRequestComponent.saveDataToList = function () {
     if ($spcontext.checkPassedValidation()) {
         formData.Employee = pickerValues.Employee;
         formData.HOD = SP.FieldUserValue.fromUser(MainApplication.staffDetails[formData.EmployeeEmail].HodEmail);
+        formData.HODEmail = MainApplication.staffDetails[formData.EmployeeEmail].HodEmail;
+        
 
         globalDefinitions.callLoader();
         AppRequest.returned = AppRequest.requestDetails.ReturnForCorrection;
