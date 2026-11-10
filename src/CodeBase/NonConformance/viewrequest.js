@@ -102,7 +102,8 @@ MainApplication.ViewRequestComponent.recoverListData = function() {
             "Modified", "PendingUserEmail", "PendingUserLogin", "Attachment_Folder", "AttachmentURL", "Author",
             "NCReferenceID", "ISOClause", "ObjectiveEvidence", "NonConformanceStatement", "TypeOfAudit",
             "Process", "Procedure", "RequestDate", "ExpectedDate", "CorrectiveActionName", "ActualDateOfResponse",
-            "RootCause", "Correction", "CorrectiveAction", "HOD", "Employee", "Year", "Requirement", "Comment"
+            "RootCause", "Correction", "CorrectiveAction", "HOD", "Employee", "Year", "Requirement", "Comment",
+            "WhyOne", "WhyTwo", "WhyThree", "WhyFour", "WhyFive"
         ];
 
         ncRoot.getListToControl(globalDefinitions.stageDefinitions.listname, query, extraProperties, function (listProperties) {

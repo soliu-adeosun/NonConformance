@@ -422,81 +422,108 @@ MainApplication.ApproveRequestComponent.deleteRowAttachment = function (elementB
 
 MainApplication.ApproveRequestComponent.otherApproversReadOnlyForm = function () {
     var otherApproversForm = `
-                    <div class="mt-2">
-                        <label class="block text-sm font-medium text-blue-600 mb-2">Name</label>
-                        <input
-                            readOnly
-                            speed-bind="Title"
-                            type="text"
-                            placeholder="Enter text here..."
-                            class="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
-                        />
-                    </div>
-                    <div class="mt-2">
-                        <label class="block text-sm font-medium text-blue-600 mb-2">Actual Date of Response</label>
-                        <input
-                            readOnly
-                            speed-bind="ActualDateOfResponse"
-                            type="text"
-                            placeholder="Enter text here..."
-                            class="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
-                        />
-                    </div>
-                    <div class="mt-2">
-                        <label class="block text-sm font-medium text-blue-600 mb-2">Root Cause of Non-Conformance</label>
-                        <textarea
-                            readOnly
-                            speed-bind="RootCause"
-                            placeholder="Enter text here..."
-                            class="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
-                        ></textarea>
-                    </div>
-                    <div class="mt-2">
-                        <label class="block text-sm font-medium text-blue-600 mb-2">Correction</label>
-                        <textarea
-                            readOnly
-                            speed-bind="Correction"
-                            placeholder="Enter text here..."
-                            class="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
-                        ></textarea>
-                    </div>
-                    <div class="mt-2">
-                        <label class="block text-sm font-medium text-blue-600 mb-2">Corrective Action</label>
-                        <textarea
-                            readOnly
-                            speed-bind="CorrectiveAction"
-                            placeholder="Enter text here..."
-                            class="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
-                        ></textarea>
-                    </div>
-                    <div class="mt-2 lg:col-span-2">
-                        <h3 class="text-lg font-semibold text-navy-900 mb-3">5 Why(s)</h3>
-                        <div class="grid grid-cols-1 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-blue-600 mb-2">Why 1</label>
-                                <textarea readOnly speed-bind="WhyOne" placeholder="Enter Why 1..." class="w-full px-3 sm:px-4 py-2 sm:py-3 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"></textarea>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-blue-600 mb-2">Why 2</label>
-                                <textarea readOnly speed-bind="WhyTwo" placeholder="Enter Why 2..." class="w-full px-3 sm:px-4 py-2 sm:py-3 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"></textarea>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-blue-600 mb-2">Why 3</label>
-                                <textarea readOnly speed-bind="WhyThree" placeholder="Enter Why 3..." class="w-full px-3 sm:px-4 py-2 sm:py-3 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"></textarea>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-blue-600 mb-2">Why 4</label>
-                                <textarea readOnly speed-bind="WhyFour" placeholder="Enter Why 4..." class="w-full px-3 sm:px-4 py-2 sm:py-3 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"></textarea>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-blue-600 mb-2">Why 5</label>
-                                <textarea readOnly speed-bind="WhyFive" placeholder="Enter Why 5..." class="w-full px-3 sm:px-4 py-2 sm:py-3 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"></textarea>
-                            </div>
+                    <h2 style="margin-top: 2.2rem" class="text-xl sm:text-2xl font-bold text-navy-900 mb-4 sm:mb-6">5 Whys</h2>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+                        <div class="mt-2">
+                            <label class="block text-sm font-medium text-blue-600 mb-2">Why 1</label>
+                            <textarea
+                                readOnly
+                                speed-bind="WhyOne"
+                                placeholder="Enter Why 1..."
+                                class="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
+                            ></textarea>
+                        </div>
+                        <div class="mt-2">
+                            <label class="block text-sm font-medium text-blue-600 mb-2">Why 2</label>
+                            <textarea
+                                readOnly
+                                speed-bind="WhyTwo"
+                                placeholder="Enter Why 2..."
+                                class="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
+                            ></textarea>
+                        </div>
+                        <div class="mt-2">
+                            <label class="block text-sm font-medium text-blue-600 mb-2">Why 3</label>
+                            <textarea
+                                readOnly
+                                speed-bind="WhyThree"
+                                placeholder="Enter Why 3..."
+                                class="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
+                            ></textarea>
+                        </div>
+                        <div class="mt-2">
+                            <label class="block text-sm font-medium text-blue-600 mb-2">Why 4</label>
+                            <textarea
+                                readOnly
+                                speed-bind="WhyFour"
+                                placeholder="Enter Why 4..."
+                                class="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
+                            ></textarea>
+                        </div>
+                        <div class="mt-2">
+                            <label class="block text-sm font-medium text-blue-600 mb-2">Why 5</label>
+                            <textarea
+                                readOnly
+                                speed-bind="WhyFive"
+                                placeholder="Enter Why 5..."
+                                class="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
+                            ></textarea>
                         </div>
                     </div>
-                    <div class="mt-2" id="attachmentFieldContainerReadonly">
-                        <label class="block text-sm font-medium text-blue-600 mb-2">Attach File</label>
-                        <div speed-file-bind="SupportingDocuments"></div>
+
+                    <h2 style="margin-top: 2.2rem" class="text-xl sm:text-2xl font-bold text-navy-900 mb-4 sm:mb-6">Root Cause and Corrective Action</h2>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+                        <div class="mt-2">
+                            <label class="block text-sm font-medium text-blue-600 mb-2">Name</label>
+                            <input
+                                readOnly
+                                speed-bind="Title"
+                                type="text"
+                                placeholder="Enter text here..."
+                                class="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
+                            />
+                        </div>
+                        <div class="mt-2">
+                            <label class="block text-sm font-medium text-blue-600 mb-2">Actual Date of Response</label>
+                            <input
+                                readOnly
+                                speed-bind="ActualDateOfResponse"
+                                type="text"
+                                placeholder="Enter text here..."
+                                class="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
+                            />
+                        </div>
+                        <div class="mt-2">
+                            <label class="block text-sm font-medium text-blue-600 mb-2">Root Cause of Non-Conformance</label>
+                            <textarea
+                                readOnly
+                                speed-bind="RootCause"
+                                placeholder="Enter text here..."
+                                class="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
+                            ></textarea>
+                        </div>
+                        <div class="mt-2">
+                            <label class="block text-sm font-medium text-blue-600 mb-2">Correction</label>
+                            <textarea
+                                readOnly
+                                speed-bind="Correction"
+                                placeholder="Enter text here..."
+                                class="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
+                            ></textarea>
+                        </div>
+                        <div class="mt-2">
+                            <label class="block text-sm font-medium text-blue-600 mb-2">Corrective Action</label>
+                            <textarea
+                                readOnly
+                                speed-bind="CorrectiveAction"
+                                placeholder="Enter text here..."
+                                class="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
+                            ></textarea>
+                        </div>
+                        <div class="mt-2" id="attachmentFieldContainerReadonly">
+                            <label class="block text-sm font-medium text-blue-600 mb-2">Attach File</label>
+                            <div speed-file-bind="SupportingDocuments"></div>
+                        </div>
                     </div>
                 
     `;
@@ -510,11 +537,6 @@ MainApplication.ApproveRequestComponent.otherApproversReadOnlyForm = function ()
 
 }
 
-/**
- * Toggle Attachment field visibility based on approval stage code.
- * AA1 (first Employee): hide attachment
- * AA3 and later: show attachment
- */
 MainApplication.ApproveRequestComponent.toggleAttachmentField = function (approverCode) {
     var $attachmentContainer = $("#attachmentFieldContainer");
     if (!$attachmentContainer.length) {

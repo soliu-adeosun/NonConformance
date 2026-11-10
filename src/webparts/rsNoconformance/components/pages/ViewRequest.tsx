@@ -204,6 +204,57 @@ export default class ViewRequest extends React.Component<{}, {}> {
 
                 {/* Readoly Section Ends Here */}
 
+                {/* 5 Whys - separate section, comes first */}
+                <h2 style={{ marginTop: "2.2rem" }} className="text-xl sm:text-2xl font-bold text-navy-900 mb-4 sm:mb-6">5 Whys</h2>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+                    <div className="mt-2">
+                        <label className="block text-sm font-medium text-blue-600 mb-2">Why 1</label>
+                        <textarea
+                            readOnly
+                            speed-bind="WhyOne"
+                            placeholder="Enter Why 1..."
+                            className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
+                        ></textarea>
+                    </div>
+                    <div className="mt-2">
+                        <label className="block text-sm font-medium text-blue-600 mb-2">Why 2</label>
+                        <textarea
+                            readOnly
+                            speed-bind="WhyTwo"
+                            placeholder="Enter Why 2..."
+                            className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
+                        ></textarea>
+                    </div>
+                    <div className="mt-2">
+                        <label className="block text-sm font-medium text-blue-600 mb-2">Why 3</label>
+                        <textarea
+                            readOnly
+                            speed-bind="WhyThree"
+                            placeholder="Enter Why 3..."
+                            className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
+                        ></textarea>
+                    </div>
+                    <div className="mt-2">
+                        <label className="block text-sm font-medium text-blue-600 mb-2">Why 4</label>
+                        <textarea
+                            readOnly
+                            speed-bind="WhyFour"
+                            placeholder="Enter Why 4..."
+                            className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
+                        ></textarea>
+                    </div>
+                    <div className="mt-2">
+                        <label className="block text-sm font-medium text-blue-600 mb-2">Why 5</label>
+                        <textarea
+                            readOnly
+                            speed-bind="WhyFive"
+                            placeholder="Enter Why 5..."
+                            className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
+                        ></textarea>
+                    </div>
+                </div>
+
+                {/* Root Cause / Correction section after 5 Whys */}
                 <h2 style={{ marginTop: "2.2rem" }} className="text-xl sm:text-2xl font-bold text-navy-900 mb-4 sm:mb-6">Correction and Corrective Action Section</h2>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
                     <div className="mt-2">
@@ -237,23 +288,21 @@ export default class ViewRequest extends React.Component<{}, {}> {
                     </div>
                     <div className="mt-2">
                         <label className="block text-sm font-medium text-blue-600 mb-2">Correction</label>
-                        <input
+                        <textarea
                             readOnly
                             speed-bind="Correction"
-                            type="text"
                             placeholder="Enter text here..."
                             className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
-                        />
+                        ></textarea>
                     </div>
                     <div className="mt-2">
                         <label className="block text-sm font-medium text-blue-600 mb-2">Corrective Action</label>
-                        <input
+                        <textarea
                             readOnly
                             speed-bind="CorrectiveAction"
-                            type="text"
                             placeholder="Enter text here..."
                             className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
-                        />
+                        ></textarea>
                     </div>
                     <div className="mt-2">
                         <label className="block text-sm font-medium text-blue-600 mb-2">Attached File</label>
