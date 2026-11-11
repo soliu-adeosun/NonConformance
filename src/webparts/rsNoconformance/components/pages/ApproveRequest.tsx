@@ -207,8 +207,31 @@ export default class ApproveRequest extends React.Component<{}, {}> {
 
                 <div id="approversReadOnlyContainer">
                     {/* 5 Whys - separate section, comes first */}
-                    <h2 style={{ marginTop: "2.2rem" }} className="text-xl sm:text-2xl font-bold text-navy-900 mb-4 sm:mb-6">5 Whys</h2>
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+                    <h2 style={{ marginTop: "2.2rem" }} className="text-xl sm:text-2xl font-bold text-navy-900 mb-4 sm:mb-6">Root Cause Analysis and Corrective Action</h2>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mb-6">
+                        <div className="mt-2">
+                            <label className="block text-sm font-medium text-blue-600 mb-2">Name</label>
+                            <input
+                                readOnly
+                                speed-bind="Title"
+                                type="text"
+                                placeholder="Enter text here..."
+                                className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
+                            />
+                        </div>
+                        <div className="mt-2">
+                            <label className="block text-sm font-medium text-blue-600 mb-2">Actual Date of Response</label>
+                            <input
+                                readOnly
+                                id="actualDateOfResponse"
+                                speed-bind-class="CorrectionData"
+                                type="text"
+                                placeholder="Enter text here..."
+                                className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
+                            />
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mb-6">
                         <div className="mt-2">
                             <label className="block text-sm font-medium text-blue-600 mb-2">Why 1<span className="required">*</span></label>
                             <textarea
@@ -257,29 +280,9 @@ export default class ApproveRequest extends React.Component<{}, {}> {
                     </div>
 
                     {/* Root Cause and Corrective Action - after 5 Whys */}
-                    <h2 style={{ marginTop: "2.2rem" }} className="text-xl sm:text-2xl font-bold text-navy-900 mb-4 sm:mb-6">Root Cause and Corrective Action</h2>
+                    
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
-                        <div className="mt-2">
-                            <label className="block text-sm font-medium text-blue-600 mb-2">Name</label>
-                            <input
-                                readOnly
-                                speed-bind="Title"
-                                type="text"
-                                placeholder="Enter text here..."
-                                className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
-                            />
-                        </div>
-                        <div className="mt-2">
-                            <label className="block text-sm font-medium text-blue-600 mb-2">Actual Date of Response</label>
-                            <input
-                                readOnly
-                                id="actualDateOfResponse"
-                                speed-bind-class="CorrectionData"
-                                type="text"
-                                placeholder="Enter text here..."
-                                className="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
-                            />
-                        </div>
+                        
                         <div className="mt-2">
                             <label className="block text-sm font-medium text-blue-600 mb-2">Root Cause of Non-Conformance<span className="required">*</span></label>
                             <textarea

@@ -422,8 +422,30 @@ MainApplication.ApproveRequestComponent.deleteRowAttachment = function (elementB
 
 MainApplication.ApproveRequestComponent.otherApproversReadOnlyForm = function () {
     var otherApproversForm = `
-                    <h2 style="margin-top: 2.2rem" class="text-xl sm:text-2xl font-bold text-navy-900 mb-4 sm:mb-6">5 Whys</h2>
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+                    <h2 style="margin-top: 2.2rem" class="text-xl sm:text-2xl font-bold text-navy-900 mb-4 sm:mb-6">Root Cause Analysis and Corrective Action</h2>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mb-6">
+                        <div class="mt-2">
+                            <label class="block text-sm font-medium text-blue-600 mb-2">Name</label>
+                            <input
+                                readOnly
+                                speed-bind="Title"
+                                type="text"
+                                placeholder="Enter text here..."
+                                class="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
+                            />
+                        </div>
+                        <div class="mt-2">
+                            <label class="block text-sm font-medium text-blue-600 mb-2">Actual Date of Response</label>
+                            <input
+                                readOnly
+                                speed-bind="ActualDateOfResponse"
+                                type="text"
+                                placeholder="Enter text here..."
+                                class="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
+                            />
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mb-6">
                         <div class="mt-2">
                             <label class="block text-sm font-medium text-blue-600 mb-2">Why 1</label>
                             <textarea
@@ -471,28 +493,9 @@ MainApplication.ApproveRequestComponent.otherApproversReadOnlyForm = function ()
                         </div>
                     </div>
 
-                    <h2 style="margin-top: 2.2rem" class="text-xl sm:text-2xl font-bold text-navy-900 mb-4 sm:mb-6">Root Cause and Corrective Action</h2>
+                    
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
-                        <div class="mt-2">
-                            <label class="block text-sm font-medium text-blue-600 mb-2">Name</label>
-                            <input
-                                readOnly
-                                speed-bind="Title"
-                                type="text"
-                                placeholder="Enter text here..."
-                                class="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
-                            />
-                        </div>
-                        <div class="mt-2">
-                            <label class="block text-sm font-medium text-blue-600 mb-2">Actual Date of Response</label>
-                            <input
-                                readOnly
-                                speed-bind="ActualDateOfResponse"
-                                type="text"
-                                placeholder="Enter text here..."
-                                class="w-full px-3 sm:px-4 py-2 sm:py-3  placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm sm:text-base"
-                            />
-                        </div>
+                        
                         <div class="mt-2">
                             <label class="block text-sm font-medium text-blue-600 mb-2">Root Cause of Non-Conformance</label>
                             <textarea
